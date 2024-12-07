@@ -1,9 +1,4 @@
 ﻿//https://adventofcode.com/2024/day/7
-using System;
-using System.Data;
-using System.Numerics;
-using System.Security.Authentication;
-
 namespace AdventOfCode
 {
     class Day7
