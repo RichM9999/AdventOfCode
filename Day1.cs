@@ -1,4 +1,5 @@
-﻿namespace AdventOfCode
+﻿//https://adventofcode.com/2024/day/1
+namespace AdventOfCode
 {
     class Day1
     {
