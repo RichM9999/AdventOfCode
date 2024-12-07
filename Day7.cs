@@ -1,4 +1,5 @@
 ﻿//https://adventofcode.com/2024/day/7
+using System;
 using System.Data;
 using System.Numerics;
 using System.Security.Authentication;
@@ -7,6 +8,7 @@ namespace AdventOfCode
 {
     class Day7
     {
+        List<char[]> base3bits = new List<char[]>();
         public void Run()
         {
             var equations = new List<string> {
@@ -866,6 +868,8 @@ namespace AdventOfCode
 
             long sum = 0;
 
+            var operatorPermutations = new Dictionary<int, List<string>>();   
+
             foreach (var equation in equations)
             {
                 long.TryParse(equation.Split(':')[0], out long answer);
@@ -874,16 +878,10 @@ namespace AdventOfCode
 
                 var gaps = inputs.Length - 1;
 
-                for (var i = 0; i < Math.Pow(2, gaps); i++)
+                var gapsPermutations = GetOperatorPermutations(ref operatorPermutations, gaps, 2);
+
+                foreach (var operators in gapsPermutations)
                 {
-                    var bits = Convert.ToString(i, 2).ToCharArray();
-                    Array.Reverse(bits);
-                    var operators = new string(bits);
-                    operators += ("0000000000000000000")[..(gaps - operators.Length)];
-
-                    operators = operators.Replace('0', '+');
-                    operators = operators.Replace('1', '*');
-
                     long.TryParse(inputs[0], out long output);
 
                     for (var j = 1;  j < inputs.Length; j++)
@@ -914,6 +912,14 @@ namespace AdventOfCode
             start = DateTime.Now;
 
             sum = 0;
+            operatorPermutations = new Dictionary<int, List<string>>();
+
+            base3bits = new List<char[]>();
+
+            for (var i = 0; i < Math.Pow(3, 11); i++)
+            {
+                base3bits.Add(IntToBase3(i));
+            }
 
             foreach (var equation in equations)
             {
@@ -923,17 +929,10 @@ namespace AdventOfCode
 
                 var gaps = inputs.Length - 1;
 
-                for (var i = 0; i < Math.Pow(3, gaps); i++)
-                {
-                    var bits = IntToBase3(i);
-                    Array.Reverse(bits);
-                    var operators = new string(bits);
-                    operators += ("0000000000000000000")[..(gaps - operators.Length)];
+                var gapsPermutations = GetOperatorPermutations(ref operatorPermutations, gaps, 3);
 
-                    operators = operators.Replace('0', '+');
-                    operators = operators.Replace('1', '*');
-                    operators = operators.Replace('2', '|');
-
+                foreach (var operators in gapsPermutations)
+                { 
                     long.TryParse(inputs[0], out long output);
 
                     for (var j = 1; j < inputs.Length; j++)
@@ -987,6 +986,51 @@ namespace AdventOfCode
             Array.Copy(buffer, i, result, 0, 32 - i);
 
             return result;
+        }
+
+        public List<string> GetOperatorPermutations(ref Dictionary<int, List<string>> operatorPermutations, int gaps, byte numericBase)
+        {
+            if (operatorPermutations.ContainsKey(gaps))
+            {
+                return operatorPermutations[gaps];
+            }
+
+            var permutations = new List<string>();
+
+            // For numericBase = 2:
+            // 2^gaps permutations of operators
+            // Represented as binary string then replace 0's/1's with +/*
+
+            // For numericBase = 3:
+            // 3^gaps permutations of operators
+            // Represented as base-3 string then replace 0's/1's/2's with +/*/|
+            for (var i = 0; i < Math.Pow(numericBase, gaps); i++)
+            {
+                char[] bits;
+                if (numericBase == 2)
+                {
+                    bits = Convert.ToString(i, 2).ToCharArray();
+                }
+                else
+                {
+                    bits = base3bits[i];
+                }
+                Array.Reverse(bits);
+                var operators = new string(bits);
+                operators += ("++++++++++++++++++++")[..(gaps - operators.Length)];
+
+                operators = operators.Replace('0', '+').Replace('1', '*');
+                if (numericBase == 3) 
+                { 
+                    operators = operators.Replace('2', '|');
+                }
+
+                permutations.Add(operators);
+            }
+            
+            operatorPermutations.Add(gaps, permutations);
+
+            return permutations;
         }
     }
 }
