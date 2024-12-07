@@ -950,6 +950,7 @@ namespace AdventOfCode
                         }
                         else
                         {
+                            // concatenation operator
                             long.TryParse($"{output}{operand}", out output);
                         }
                     }
