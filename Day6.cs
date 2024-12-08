@@ -244,6 +244,7 @@ namespace AdventOfCode
             Console.WriteLine($"Obstacles: {obstacles}");
             Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
         }
+
         void AddMapRow(int row, ref char[,] map, string data)
         {
             for (var i = 0; i < data.Length; i++)
