@@ -118,6 +118,8 @@ namespace AdventOfCode
 
             if (sidesOnly)
             {
+                // Sum of corners is number of unique sides
+                // https://discord.com/channels/1257005545580396554/1257009960341078096/1316669933526188055
                 region.perimiter = GetCorners(adjacentPlants, ref map);
             }
             else 
@@ -135,26 +137,32 @@ namespace AdventOfCode
 
         List<(int x, int y)> AdjacentPlants(char plant, int x, int y, ref char[,] map)
         {
+            // Get all spaces adjacent to x,y with same plant type
             var adjacent = new List<(int x, int y)>();
+
             if (x > 0)
             {
+                // Check left
                 if (map[y, x - 1] == plant)
                     adjacent.Add((x: x - 1, y));
             }
             if (y > 0)
             {
+                // Check up
                 if (map[y - 1, x] == plant)
                     adjacent.Add((x, y: y - 1));
             }
 
             if (x < mapSize - 1)
             {
+                // Check right
                 if (map[y, x + 1] == plant)
                     adjacent.Add((x: x + 1, y));
             }
 
             if (y < mapSize - 1)
             {
+                // Check down
                 if (map[y + 1, x] == plant)
                     adjacent.Add((x, y: y + 1));
             }
@@ -172,28 +180,34 @@ namespace AdventOfCode
                 var y = adj.y;
                 var plant = map[y, x];
 
+                // Total permiter possible for one square is 4
                 var perimiter = 4;
 
+                // Each side adjacent to a plant of the same type is not on the permiter
                 if (x > 0)
                 {
+                    // Check left
                     if (map[y, x - 1] == plant)
                         perimiter--;
                 }
 
                 if (y > 0)
                 {
+                    // Check up
                     if (map[y - 1, x] == plant)
                         perimiter--;
                 }
 
                 if (x < mapSize - 1)
                 {
+                    // Check right
                     if (map[y, x + 1] == plant)
                         perimiter--;
                 }
 
                 if (y < mapSize - 1)
                 {
+                    // Check down
                     if (map[y + 1, x] == plant)
                         perimiter--;
                 }
@@ -214,6 +228,10 @@ namespace AdventOfCode
                 var x = adj.x;
                 var y = adj.y;
                 var plant = map[y, x];
+
+                // | = left/right edge of map
+                // - = top/bottom edge of map
+                // . = non-matching plant type
 
                 if (x == 0 && y == 0)
                 {
