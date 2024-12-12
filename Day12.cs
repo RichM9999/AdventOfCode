@@ -119,8 +119,6 @@ namespace AdventOfCode
             if (sidesOnly)
             {
                 region.perimiter = GetCorners(adjacentPlants, ref map);
-                if (GetPerimiter(adjacentPlants, ref map) < region.perimiter)
-                    Console.WriteLine();
             }
             else 
             {
