@@ -69,6 +69,5 @@ namespace AdventOfCode
 
             return [ stone * 2024 ];
         }
-
     }
 }
