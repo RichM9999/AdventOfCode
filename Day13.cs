@@ -364,13 +364,13 @@ namespace AdventOfCode
                 var MY = DenseMatrix.Build.DenseOfArray(matrix);
                 var determinantMY = MY.Determinant().Magnitude;
 
-                var A = determinantMX / determinantM;
-                var B = determinantMY / determinantM;
+                var pressesA = determinantMX / determinantM;
+                var pressesB = determinantMY / determinantM;
 
-                if (Math.Abs(Math.Round(A) - A) < 0.000001
-                        && Math.Abs(Math.Round(B) - B) < 0.00001)
+                if (Math.Abs(Math.Round(pressesA) - pressesA) < 0.000001
+                        && Math.Abs(Math.Round(pressesB) - pressesB) < 0.00001)
                 {
-                    tokens += (long)Math.Round(A) * 3 + (long)Math.Round(B);
+                    tokens += (long)Math.Round(pressesA) * 3 + (long)Math.Round(pressesB);
                 }
             }
 
@@ -409,13 +409,13 @@ namespace AdventOfCode
                 var MY = DenseMatrix.Build.DenseOfArray(matrix);
                 var determinantMY = MY.Determinant().Magnitude;
 
-                var A = determinantMX / determinantM;
-                var B = determinantMY / determinantM;
+                var pressesA = determinantMX / determinantM;
+                var pressesB = determinantMY / determinantM;
 
-                if (Math.Abs(Math.Round(A) - A) < 0.01
-                        && Math.Abs(Math.Round(B) - B) < 0.01)
+                if (Math.Abs(Math.Round(pressesA) - pressesA) < 0.01
+                        && Math.Abs(Math.Round(pressesB) - pressesB) < 0.01)
                 {
-                    tokens += (long)Math.Round(A) * 3 + (long)Math.Round(B);
+                    tokens += (long)Math.Round(pressesA) * 3 + (long)Math.Round(pressesB);
                 }
             }
 
