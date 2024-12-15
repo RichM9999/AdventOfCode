@@ -332,6 +332,8 @@ namespace AdventOfCode
 
         public void Run()
         {
+            var start = DateTime.Now;
+
             long tokens = 0;
 
             foreach (var machine in machines)
@@ -376,6 +378,9 @@ namespace AdventOfCode
 
             Console.WriteLine($"Tokens: {tokens}");
             //39290
+            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
+
+            start = DateTime.Now;
 
             tokens = 0;
 
@@ -421,6 +426,7 @@ namespace AdventOfCode
 
             Console.WriteLine($"Tokens: {tokens}");
             //73458657399094
+            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
         }
     }
 }

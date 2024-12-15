@@ -16,6 +16,8 @@ namespace AdventOfCode
 
         public void Run()
         {
+            var start = DateTime.Now;
+
             SetupRobots();
 
             for (var seconds = 1; seconds <= 100; seconds++)
@@ -27,6 +29,7 @@ namespace AdventOfCode
 
             Console.WriteLine($"Safety factor: {factor}");
             //228457125
+            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
 
             robots = new List<RobotInfo>();
 

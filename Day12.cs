@@ -7,7 +7,6 @@ namespace AdventOfCode
 
         public void Run()
         {
-
             var map = new char[mapSize, mapSize];
 
             var regions = new List<Region>();
