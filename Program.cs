@@ -6,6 +6,6 @@
         {
             var day = new Day15();
             day.Run();
-        }
+       }
     }
 }

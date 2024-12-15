@@ -1,15 +1,15 @@
-﻿//https://adventofcode.com/2024/day/14
-using MathNet.Numerics.RootFinding;
-using System.ComponentModel.Design;
-
+﻿//https://adventofcode.com/2024/day/15
 namespace AdventOfCode
 {
     class Day15
     {
         int mapSizeY = 50;
         int mapSizeX = 50;
+        int currentX = 0;
+        int currentY = 0;
 
         char[,] map;
+        string movements = string.Empty;
 
         public Day15()
         {
@@ -20,20 +20,7 @@ namespace AdventOfCode
         {
             var start = DateTime.Now;
 
-            SetupMap();
-            var movements = string.Empty;
-
-            //movements += @"<vv>^<v^>v>^vv^v>v<>v^v<v<^vv<<<^><<><>>v<vvv<>^v^>^<<<><<v<<<v^vv^v>^";
-            //movements += @"vvv<<^>^v^^><<>>><>^<<><^vv^^<>vvv<>><^^v>^>vv<>v<<<<v<^v>^<^^>>>^<v<v";
-            //movements += @"><>vv>v^v^<>><>>>><^^>vv>v<^^^>>v^v^<^^>v^^>v^<^v>v<>>v^v^<v>v^^<^^vv<";
-            //movements += @"<<v<^>>^^^^>>>v^<>vvv^><v<<<>^^^vv^<vvv>^>v<^^^^v<>^>vvvv><>>v^<<^^^^^";
-            //movements += @"^><^><>>><>^^<<^^v>>><^<v>^<vv>>v>>>^v><>^v><<<<v>>v<v<v>vvv>^<><<>^><";
-            //movements += @"^>><>^v<><^vvv<^^<><v<<<<<><^v<<<><<<^^<v<^^^><^>>^<v^><<<^>>^v<v^v<v^";
-            //movements += @">^>>^v>vv>^<<^v<>><<><<v<<v><>v<^vv<<<>^^v^>^^>>><<^v>>v^v><^^>>^<>vv^";
-            //movements += @"<><^^>^^^<><vvvvv^v<v<<>^v<v>v<<^><<><<><<<^^<<<^<<>><<><^^^>^^<>^>v<>";
-            //movements += @"^^>vv<^v^v<vv>^<><v<^v>^^^>>>^^vvv^>vvv<>>>^<^>>>>>^<<^v>^vvv<>^<><<v>";
-            //movements += @"v^^>>><<^^<>>^v^<v^vv<>v^<<>^<^v^v><^<<<><<^<v><v<>vv>>v><v^<vv<>v^<<^";
-
+            movements = string.Empty;
             movements += @"><<vv>><>>^v><^>vv>v><vv>^v<>^v<^v>>v<^<<v^>>v<^>^^^^^v^v><<<<v<<v<^>^^v^vv^^>^>^<v<>v><^<>^^>^>vv<>v><>>^>^><v^>^vv><>><<^>^>^v^<v><v^v>^>v^<^^>^<>^v^<>v^^^>>><v^><v<^>>^<^^vvvv>^v<>>v>^>>v<v><<<vv<vv<v^>v>vvvv<v>^<v^>vv<v<><<^^^>^><^^v>v>^^>^<^v<vv>v<^v^v>v><<><vv<^>^<>^v<>><<^^<<<^v<^vv^^^^>v<<<v^vv<<vv>^^v<^<>><>><v^<<vv<v^<<<>^<vv>^<>^>>>^><<<^><<<v^v<>^^^^<<^^>^vv>^><>^<^<^v^<v<v^^><v^<><<v^>><<^^>v<>v^>>><>^><<<<^^<^<<<<v>v>vv<vv^vvv<^v<v^>>>v^><<<^>vv^>>v^<^vv<><><<^<<^v>vv<^^><>>>^<v<<>^v>>>^v><vv>>vv^v<<v>>^<<>vv><><^v<vvvvv<v><>v<><v>^>vvvv<>>vv><>><^v<<>^>vvv>^v<vv^^>v^<^v<v<^<>>^^v<^>>><<<^^<^<^^^^<<>^^^>^>^><v<v<<<<^^<vv>v<<^^^>v^v<v<><>^^>^^vvvv^>^^><<><^^>>^><<v^vv^<>v<^^<v^^v^>^<^v<<<v^<v<><^v^>>^<<vvv^^^^<<^<^^>vvvv>>^<>^^>^^^v<^>v<^<vv<><^v>^<^<>^>>^^v<>vv>>^<>v^^^^^^><vv<^v<^>^vv>v<<>>^v<v<>>vvv>>>>v><>>^v<vv<>^<<^<v<>>v<v^<^><^^><^v>v><<vvvvv<^<v<^v>^<<><v^<>>v>v>>v>v^><vv><<>v>^^<>v<>>^^><v<<v^>>v^>^v^<>v><^^>>vv>v>v<>v^^^<^>^<v>^<>v<><<><^<<><v<>^>v<><<<<^v^<^^v<";
             movements += @"<^<^^<><>^<v><>^<^v>>>^<<>^>>v^v^<<v^>v<<v^^>vv><<><vv>^v^<>><<>>^^^^<<^vv>><<v^^<>><^^^<<vvv><<v^^^vv^^^>><v>>>>><v<^^^v>>>v<>vv><<vvvv^^>vv<v<^<>v^vv^v><^<<^v<<v^<vvv<v<<>^>v^v>^>>v>><><>vvv>>>^v^<<>^>^<>^><^>^^>>v<^>vv^^v<>>>>>v^><^>^>v>v<v<<vv^^^>><v^^^>v^^<^^><><>>v<>>^>v^^>^><^^<v>>v^>v^>v<^<vv^<^><v^v^v^v>v<^^vvv>>^>v>^v^^>v^><<v<><^^^<>v><^^v^v<v<>>^>^<>^<<>v<^><><v<><^<v<^>>^v^>^^vv<>v>v^v>v<<v^<<>>v^^v<v>^^v>v^<^^v><v>v^>^<<v<><>>^v>vv<>v^v<>^^v>>v<v^<><<><>>>^vv>v<v^^vv^<>>>v<>vvv^>^<<<^>><<>^>>^>^v><>^^v^<^<vv^><><>vv>v<^<v^^>^vv^^>^v>^v^>><v^v>>^^>vv>v<v<^>v<><^>>^><v<<<v<v><v><^<>v^^<<^vv^><>><<>>>v^<><>>^v>^vv<>v<^<v^<>>v^^<<<^^><v<^<^^<^>vvv<v<<>v^^><v^^<>>><^v>^v^>v>v^^v>^v<>v^^vvv>>v<<^><^^v<v<^v<^><vv>v<<<v<>>^<^v<<<><<>^<vv<^>v<>vvv>^^>>^>^>>^>^>vv>>^>v>^v<<>vvv^^<<<><<><<vvv<>><><^>v^><v^>>^>^>>^v^<<^<^^^v^^<<v><^<<vv<>^vv<^v<<^>^><>^<v<<>^v<>><v^<^v>^>>^>vvv<>v><v^vv<vv<<<<^vv^v^v^>>>^<v><^^vv<<<<^<^<^><>v<>v<<v^^<vv>v><^v>^<^^^^vvv>^^vv<<>^>^<<v<v^<<v^^<v<^^<v^v^";
             movements += @">^^>>v>>^^vv^vv>^>><^^>>^v<^<><vv>v<v<v>^>><v<^^v><v^>>vv<<^v>>^v>^<vv>^>v<v><<<>^>v^<>v^>^^^<v<v>v<^>vv>>v<><>v^>>v^<<^><<v^^^>vv<>^><>>^<<<>^^<><<v>>v^^<<>><>v><<v<^>>^>>^v^<^>^<>v^v>v>^v^><><>><>vv<vvv<<v>v>vv>^<^<<vv<>^<<>^v<<><<^v>^>>v<>>vvvv<<^>^><<>>^^v<>^^v>v<<<vv<vv^^>v<<v^^<v^v^^><<v><^vvv>>v^<v^<><<<>v<^<>^>v><^^<^<<>><>>>>v<v<<>v<v^<>>><<^<>^>^^^^<>v^v^<><v<^>vv^<^<^^vv^v^>^v>>v><^<^>>>><^>>^>><vv^<>^v<v><<>>vvvvvv^^^<v<>>v^>>v<^v>^^><>>>v^v>^v>>^>>^><^^<<^^^^><><^^vv^><><>v^^>^^<<^^^<><<>v>>vv^^>^^^v<v^v>^v^^^><<><<><v>vv>v<^^>^<<<^><><^v^<^vv<^^^v<>^>>^<^>><><^vv^^>^<^v>^>v^v>^<>v^v<^>v><v<^^>v^<<^v<>vv^v><>v>>v^<^<v<^>v><^<^<>>>v<^>^vv>>>v>v<^^v<v<>v^v<^vv><v>^v>>v>^<><^v><<<vv>v>>v^v^vv^<<vv^<>><<>>^v<v^v>^^vv<v><<^><^v^^<<^vv^^<<^>^>>v<>^><^^v<v^v^^>^^^>v^<<>^^<v^v>>>v<v^<^v><^vv<>^^vv^^v>>^<>v<>>^><<<vvvv><<<v>>^<^v>^>^^>>v>v^v<<v^^^<><<^v>><<^^<<<^^v<<v>>v<v<<vv<v><^v^>^<vv>^><^<v><v^vv>^v<^>v>>>>>^<<^<^v>>v^>v^>^vv>^v>v^v<v^>v^<^<v<>^<<vvvvv^v>v>>^>^<<v<vv<v>>^^^<^<";
@@ -55,10 +42,10 @@ namespace AdventOfCode
             movements += @"v<v<^v>>vvv<^^v^v^>^<><<>>v<<v>vv>v^^>>>^^<>^<v>><>^><<<>^^>>>v<v^<^<>^>^v^>^v>^<^^^^<^>v<vv<^v^v<v<^<v<<>^^v^v>^v<><v^^<^^vv^><^^v<>>>>^v^><<>>^v^<>v<>^>v>>v<^>vvv<^^<<vv<^>>v<<><>>v<vv><<v<v>^><^<<vv><>^<>^vv^v><v^<<v>^^<>v<<<^^>>^^<^vv<<v^v><>vv><v<<vv>^<^<>v<^vv^^<v><v^>v^<>><^vv<v^>v>v>v<^^><<>v<^<^>v>v>^<v^^vvvv<>vv>v^^v^^<><>>^>v<vv<><^v<^vvv<v>^v>vv<v<v<>^>^>^v><^<v^<>^v<^v^v>^<^^^<v<>vv>^>^<^<vvv<>vv>vv>vv>^<>^<<<v<<<vvv^<<<^<<>^>^v>>v^v<>>><>v<>>vv<><^>v><v^>><vv>^<v<<^vv><<v^<>><>>><<vvv<^v<^<<<>v^v>vv>v<<<^v^^>vv^^>vv^<>>^^<>vvv>v><<^v<v>>v^<^v>^>>>^>>^^^vv^>^>^>^v<>^v^vv^<<^<>>v>vv<^>>>vv<^^^v^v<^<^v<<vv>>><<<<<<>^>><^>^><>^<v<><<<^^>^<>^v^>v>^<>^^^<>v<>v^^v<>><v^<v<>vvv<^vvv<^^^^<^><>v<v<<<v<<vvv>^^^<<^v>^>v^v>^>^^vv>^v^>>^<<<v<<><^>v^>^>vv^^<>vv^<vvv^<><^^<v<<^<^vv>^^^>>v>^v<v<<>><>^vv>>^<^<<<v^><v^>^>^<>v>^>v>>v>v^v<^<^>vv^><<v<><v^<><>^^^v^>^<>^<v<^>>^^v<v<^>v<<>>^^>>^v^<^>v^>>^v<><v<^^^^<v>>v^^>vvv><v^>v>^>v^>^><><^v^<v<>v^<^^^^>v>^^^>^^>vv<><v>>^<><<<<<vv^>^v>v<>>v>>";
             movements += @">^^<>>v^>vvv<><v^<vv>>v<<<vv<v<>>>v<>v<<>^^<^v>><v^^vv>vv^v<v<^>><><v>vv<vv>^^>v>vvv^^v^^>v^^^<<v<>>^<v>^<<<^>^>><<<><><v<v>>><v^<v<v^v><>^>>^v^>><^<<^<^><>>>><v^>>><>v<>>vv><><^v>>v<<>vv<>v^>>>><><<><^^v<^>v>v^<>>>^<^v^v^>>vvvv>v>vvvvv^v<><>^<<^><<><<^vv>^^v<>vv^><v<>^<v<v><^<v>v^><vv<vvvvvvv^><<<^^<v>^><><<<vv<<^^^^>v<^>v^^<^>>^>^^^v^^^vvv^^v>^v>v^>><><<^^>>v^<>^<^>^vv^^^v>v><<><^v>v^>^v<v^vv>^<^<<<^^<^vv^<v>^^v^<<v><>^<<>^>^>vv^^v<v<v^vv^^v>^<^v>>^<^v^>v^^<<<>v>v>v<v><>v^>v>><v^^^^v^v<>><><>>>v^v>^><^<v<vv>>^v^v>><<<<<^<>v>v>v>>>>^>vvv><>v><v^<v<>>vv^^><<>>>^<^v>^<<^>v<>v^vv^>^<v^>v<v<<<^v>v<^<^v>^>>vv>><<>^<<v<^v^<<>><^v>vv>^>><<^^>vvv><>>vv>^<<^v^^v^<^v><vv<vv^v^<<<^>v^^v><^v<>^vv<^>>v<<><vv^vv>>vvv^<^<v^v^v>^v^>^^v^^>v^><^^>v>^^>v<^vvv^^>>^<><<v^v^>vv>><^vv^><^v>vvv><<<v^<v>v^<<>v<v<v><>vvvv<<^vvv<<vvv<vv>^v>>>v^>^v><^><^<^>^vv>>^<v<<>>>^vv>><v<^<vv<^<v<^vvvv<^<><><^>^v>^^v>>^>vv<<<v><>>v^v<<vvv>v<>vv>v<v<>v<^<^v^v>>>^<^^^><<>^>v^^v<>^>vv<^^>>v^^v^v<v^>^v^v<^>v^vv><<><><<vv<v<vv>";
 
+            SetupMap();
+
             var startX = 0;
             var startY = 0;
-            var currentX = 0;
-            var currentY = 0;
 
             // Find starting point
             for (var y = 0; y < mapSizeY; y++)
@@ -109,20 +96,23 @@ namespace AdventOfCode
             }
             map[currentY, currentX] = '@';
 
-
             var sum = 0;
             for (var y = 0; y < mapSizeY; y++)
-            { 
+            {
                 for (var x = 0; x < mapSizeX; x++)
                 {
-                    if (map[y,x] == 'O')
+                    if (map[y, x] == 'O' || map[y,x] == '[')
                         sum += y * 100 + x;
                 }
             }
             Console.WriteLine($"Sum of GPS: {sum}");
+            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
 
             mapSizeX = mapSizeX * 2;
             SetupMap(true);
+
+            startX = 0;
+            startY = 0;
 
             // Find starting point
             for (var y = 0; y < mapSizeY; y++)
@@ -169,37 +159,21 @@ namespace AdventOfCode
                     {
                         currentX--;
                     }
-
-                    //map[currentY, currentX] = '@';
-                    //if (m > 280)
-                    //{
-                    //    DumpMap();
-                    //    Console.SetCursorPosition(0, mapSizeY + 2);
-                    //    Console.WriteLine($"movement: {m}, direction: {direction}");
-                    //    if (m < movements.Length)
-                    //    {
-                    //        Console.WriteLine($"next direction: {movements[m+1]}");
-                    //    }
-                    //    Console.ReadKey();
-                    //}
-                    //map[currentY, currentX] = '.';
                 }
+                map[currentY, currentX] = '@';
             }
-            map[currentY, currentX] = '@';
-
-            DumpMap();
-            Console.ReadLine();
 
             sum = 0;
             for (var y = 0; y < mapSizeY; y++)
             {
                 for (var x = 0; x < mapSizeX; x++)
                 {
-                    if (map[y, x] == '[')
+                    if (map[y, x] == 'O' || map[y, x] == '[')
                         sum += y * 100 + x;
                 }
             }
-            Console.WriteLine($"Sum of GPS: {sum}");
+            Console.WriteLine($"Sum of GPS with double-wide boxes: {sum}");
+            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
         }
 
         bool TryToMove(char direction, int currentX, int currentY)
@@ -423,9 +397,6 @@ namespace AdventOfCode
 
             if (direction == '>')
             {
-                //if (map[firstBoxY, firstBoxX + 2] != '.')
-                //    return false;
-
                 while (lastBoxX < mapSizeX - 1)
                 {
                     lastBoxX++;
@@ -452,9 +423,6 @@ namespace AdventOfCode
 
             if (direction == '<')
             {
-                //if (map[firstBoxY, firstBoxX - 2] != '.')
-                //    return false;
-
                 while (lastBoxX > 0)
                 {
                     lastBoxX--;
@@ -563,17 +531,23 @@ namespace AdventOfCode
 
                         for (var x = leftEdge; x <= rightEdge; x++)
                         {
-                            if (map[lastBoxY, x] == '[' && startOfNewSpan == -1)
+                            if (map[lastBoxY, x] == '[')
                             {
                                 spacesToMove.Add((x, lastBoxY));
-                                startOfNewSpan = x;
+                                if (startOfNewSpan == -1)
+                                {
+                                    startOfNewSpan = x;
+                                }
                             }
 
                             if (map[lastBoxY, x] == ']')
                             {
                                 spacesToMove.Add((x, lastBoxY));
-                                newBoxSpans.Add((startOfNewSpan, x));
-                                startOfNewSpan = -1;
+                                if (x == rightEdge || map[lastBoxY, x + 1] == '.')
+                                {
+                                    newBoxSpans.Add((startOfNewSpan, x));
+                                    startOfNewSpan = -1;
+                                }
                             }
                         }
                     }
@@ -667,17 +641,23 @@ namespace AdventOfCode
 
                         for (var x = leftEdge; x <= rightEdge; x++)
                         {
-                            if (map[lastBoxY, x] == '[' && startOfNewSpan == -1)
+                            if (map[lastBoxY, x] == '[')
                             {
                                 spacesToMove.Add((x, lastBoxY));
-                                startOfNewSpan = x;
+                                if (startOfNewSpan == -1)
+                                {
+                                    startOfNewSpan = x;
+                                }
                             }
 
                             if (map[lastBoxY, x] == ']')
                             {
                                 spacesToMove.Add((x, lastBoxY));
-                                newBoxSpans.Add((startOfNewSpan, x));
-                                startOfNewSpan = -1;
+                                if (x == rightEdge || map[lastBoxY, x + 1] == '.')
+                                {
+                                    newBoxSpans.Add((startOfNewSpan, x));
+                                    startOfNewSpan = -1;
+                                }
                             }
                         }
                     }
@@ -724,17 +704,6 @@ namespace AdventOfCode
         void SetupMap(bool doubleWide = false)
         {
             map = new char[mapSizeY, mapSizeX];
-            //AddMapRow(0, doubleWide, "##########");
-            //AddMapRow(1, doubleWide, "#..O..O.O#");
-            //AddMapRow(2, doubleWide, "#......O.#");
-            //AddMapRow(3, doubleWide, "#.OO..O.O#");
-            //AddMapRow(4, doubleWide, "#..O@..O.#");
-            //AddMapRow(5, doubleWide, "#O#..O...#");
-            //AddMapRow(6, doubleWide, "#O..O..O.#");
-            //AddMapRow(7, doubleWide, "#.OO.O.OO#");
-            //AddMapRow(8, doubleWide, "#....O...#");
-            //AddMapRow(9, doubleWide, "##########");
-            //return;
 
             AddMapRow(0, doubleWide, "##################################################");
             AddMapRow(1, doubleWide, "#.#...O...O..#O.O...O..O...#....O...#O...O...OO..#");
@@ -795,9 +764,15 @@ namespace AdventOfCode
                 for (var x = 0; x < mapSizeX; x++)
                 {
                     Console.SetCursorPosition(x, y);
-                    Console.Write(map[y, x]);
+                    if (y == currentY && x == currentX)
+                    {
+                        Console.Write('@');
+                    } 
+                    else 
+                    {
+                        Console.Write(map[y, x]);
+                    }
                 }
-                //Console.WriteLine();
             }
         }
     }
