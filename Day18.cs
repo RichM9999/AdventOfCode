@@ -1,4 +1,4 @@
-﻿//https://adventofcode.com/2024/day/17
+﻿//https://adventofcode.com/2024/day/18
 namespace AdventOfCode
 {
     using Coordinate = (int x, int y);
