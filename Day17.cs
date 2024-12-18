@@ -1,10 +1,4 @@
 ﻿//https://adventofcode.com/2024/day/17
-using Microsoft.Win32;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Reflection.PortableExecutable;
-using System.Text.RegularExpressions;
-
 namespace AdventOfCode
 {
     class Day17
@@ -18,6 +12,7 @@ namespace AdventOfCode
         int[] instructions;
 
         int pointer;
+
         public Day17()
         {
             instructions = [ ];
