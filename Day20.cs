@@ -83,23 +83,39 @@ namespace AdventOfCode
         long NumberOfCheats(Dictionary<Coordinate, int> route, int minimumSavings, int cheatLength)
         {
             long numberOfCheats = 0;
+
             // Used to multiply by cheat difference X and Y (0..cheat Length) to get amount 
             // to add to cheat start position to get cheat end position
-            List<(int, int)> cheatDirections = [(-1, 1), (1, 1), (-1, -1), (1, -1)];
+            // Left+Down, Right+Down, Left+Up, Right+Up
+            // When x or y are zero, also becomes just Left, Right, Up and Down
+            //  Eight possible offsets when diff X and diff Y are both Positive or either diff X or diff Y are zero:
+            //  (-1,-1)( 0,-1)( 1,-1)
+            //  (-1, 0) START ( 1, 0)
+            //  (-1, 1)( 0, 1)( 1, 1)
+            List<(int, int)> cheatOffsets = [(-1, 1), (1, 1), (-1, -1), (1, -1)];
 
             foreach ((int x, int y) in route.Keys)
             {
                 HashSet<(int x, int y)> cheatsUsed = [];
 
-                // For any given cheat start, check all possible cheat end locations up to cheat Length away
-                // Cheat Length 2:
-                //     E
-                //    EEE
-                //   EESEE
-                //    EEE
-                //     E
+                // For any given cheat start S, check all possible cheat end locations E up to cheat Length away
+                //
+                // For cheat Length 2:
+                //
+                //               diffs   offset     diffs   offset     diffs   offset    diffs   offset    diffs   offset     diffs   offset     diffs   offset    diffs   offset
+                //     E         (0,2) * (-1, -1) > (0,2) * (1, -1)
+                //    EEE        (1,1) * (-1, -1),  (0,1) * (-1, -1),  (1,1) * (1, -1) > (0,1) * (1, -1)
+                //   EESEE       (2,0) * (-1, -1),  (1,0) * (-1, -1),  (1,0) * (1,  1),  (2,0) * (1,  1) > (2,0) * (-1,  1),  (1,0) * (-1,  1),  (1,0) * (1, -1),  (2,0) * (1, -1)
+                //    EEE        (1,1) * (-1,  1),  (0,1) * ( 1,  1),  (1,1) * (1,  1) > (0,1) * (-1, 1)
+                //     E         (0,2) * ( 1,  1) > (0,2) * (-1, 1)
+                //
+                // NOTE: When a 0 diff X or 0 diff Y is involved, multiple offsets give the same end location
+                //       These are denoted after the > in the chart above
+                // 
                 // Valid E points are X and Y away from S where X + Y <= Cheat Length
 
+
+                // Check -length to +length in X and Y directions where diff X + diff Y <= max cheat length
                 for (int cheatDiffX = 0; cheatDiffX <= cheatLength; cheatDiffX++)
                 {
                     for (int cheatDiffY = 0; cheatDiffY <= cheatLength; cheatDiffY++)
@@ -110,19 +126,22 @@ namespace AdventOfCode
                             continue; 
                         }
 
-                        foreach ((int directionFactorX, int directionFactorY) in cheatDirections)
+                        // Check diff in all offset directions
+                        foreach ((int offsetFactorX, int offsetFactorY) in cheatOffsets)
                         {
-                            Coordinate newPosition = (x + (cheatDiffX * directionFactorX), y + (cheatDiffY * directionFactorY));
+                            // Calculate new position based on starting value plus diff spaces in direction offset direction
+                            Coordinate cheatEnd = (x + (cheatDiffX * offsetFactorX), y + (cheatDiffY * offsetFactorY));
 
                             // Ignore cheat end positions off the map
-                            // 1 to mapSize - 2 since map has one unit border
-                            if (newPosition.x < 1 || newPosition.y < 1
-                                || newPosition.x > mapSizeX - 2 || newPosition.y > mapSizeY - 2)
+                            // 1 to mapSize - 2 since map has a one unit border
+                            if (cheatEnd.x < 1 || cheatEnd.y < 1
+                                || cheatEnd.x > mapSizeX - 2 || cheatEnd.y > mapSizeY - 2)
                             {
                                 continue;
                             }
 
-                            if (route.TryGetValue(newPosition, out int standardDistanceToNewPosition))
+                            // Get standard distance to the potential cheat end spot
+                            if (route.TryGetValue(cheatEnd, out int standardDistanceToNewPosition))
                             {
                                 // Cheat savings is standard distance to the cheat end
                                 // minus the standard distance to the cheat start
@@ -133,11 +152,11 @@ namespace AdventOfCode
                                 // If cheat saves at least minimum amount
                                 // and haven't used a cheat that lands in the same spot yet
                                 // then we found a new cheat
-                                if (cheatSavings >= minimumSavings && !cheatsUsed.Contains(newPosition))
+                                if (cheatSavings >= minimumSavings && !cheatsUsed.Contains(cheatEnd))
                                 {
                                     numberOfCheats++;
                                 }
-                                cheatsUsed.Add(newPosition);
+                                cheatsUsed.Add(cheatEnd);
                             }
                         }
                     }
