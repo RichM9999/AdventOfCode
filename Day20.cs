@@ -9,11 +9,11 @@ namespace AdventOfCode
         int mapSizeY = 141;
         int mapSizeX = 141;
 
-        char[,] map;
+        Dictionary<Coordinate, char> map;
 
         public Day20()
         {
-            map = new char[mapSizeX, mapSizeY];
+            map = [];
             orthogonalNeighbors = [new Coordinate(0, 1), new Coordinate(1, 0), new Coordinate(0, -1), new Coordinate(-1, 0)];
         }
 
@@ -23,7 +23,7 @@ namespace AdventOfCode
 
             var start = DateTime.Now;
 
-            map = new char[mapSizeX, mapSizeY];
+            map = [];
             SetupMap();
 
             start = DateTime.Now;
@@ -52,33 +52,23 @@ namespace AdventOfCode
 
         Dictionary<Coordinate, int> FindRoute()
         {
-            Coordinate start = (0, 0);
-            Coordinate end = (0, 0);
-
             // Find start and end
-            for (var x = 0; x < mapSizeX; x++)
-            {
-                for (var y = 0; y < mapSizeY; y++)
-                {
-                    if (map[x, y] == 'S')
-                        start = (x, y);
+            var start = map.First(m => m.Value == 'S').Key;
+            var end = map.First(m => m.Value == 'E').Key;
 
-                    if (map[x, y] == 'E')
-                        end = (x, y);
-                }
-            }
-
-            Coordinate currentPosition = start;
-            map[end.x, end.y] = '.';
+            var currentPosition = start;
+            map[end] = '.';
             int steps = 0;
+            
             Dictionary<Coordinate, int> route = new() { { currentPosition, 0 } };
+
             do
             {
                 steps++;
                 foreach (Coordinate neighbor in orthogonalNeighbors)
                 {
                     Coordinate newPosition = (currentPosition.x + neighbor.x, currentPosition.y + neighbor.y);
-                    if (map[newPosition.x, newPosition.y] == '.' && !route.ContainsKey(newPosition))
+                    if (map[newPosition] == '.' && !route.ContainsKey(newPosition))
                     {
                         currentPosition = newPosition;
                         route[currentPosition] = steps;
@@ -161,7 +151,7 @@ namespace AdventOfCode
             for (var x = 0; x < data.Length; x++)
             {
                 var space = data[x];
-                map[x, row] = space;
+                map.Add((x, row), space);
             }
         }
 
@@ -334,10 +324,9 @@ namespace AdventOfCode
                 for (var y = 0; y < mapSizeY; y++)
                 {
                     Console.SetCursorPosition(x, y);
-                    Console.Write(map[x, y]);
+                    Console.Write(map[(x, y)]);
                 }
             }
         }
-
     }
 }
