@@ -20,7 +20,6 @@ namespace AdventOfCode
 
         public void Run()
         {
-
             var start = DateTime.Now;
 
             map = [];
