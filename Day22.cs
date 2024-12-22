@@ -4,7 +4,7 @@ namespace AdventOfCode
     class Day22
     {
         private List<long> numbers;
-        private Dictionary<(long starting, long s1, long s2, long s3, long s4), long> sequenceCounts;
+        private Dictionary<(long starting, sbyte s1, sbyte s2, sbyte s3, sbyte s4), long> sequenceCounts;
 
         public Day22()
         {
@@ -19,18 +19,18 @@ namespace AdventOfCode
             var start = DateTime.Now;
 
             long sum = 0;
-            long? nLast = null;
-            long nCurrent = 0;
-            long? s1 = null;
-            long? s2 = null;
-            long? s3 = null;
-            long? s4 = null;
+            sbyte? nLast = null;
+            sbyte nCurrent = 0;
+            sbyte? s1 = null;
+            sbyte? s2 = null;
+            sbyte? s3 = null;
+            sbyte? s4 = null;
 
             foreach (long number in numbers)
             {
                 var starting = number;
                 var secretNumber = number;
-                nLast = long.Parse(number.ToString()[^1].ToString());
+                nLast = (sbyte)(number % 10);
                 nCurrent = 0;
                 s2 = null;
                 s3 = null;
@@ -50,14 +50,14 @@ namespace AdventOfCode
                     result = Mix(secretNumber, result);
                     secretNumber = Prune(result);
 
-                    nCurrent = long.Parse(secretNumber.ToString()[^1].ToString());
+                    nCurrent = (sbyte)(secretNumber % 10);
 
                     if (s1 == null || s2 == null || s3 == null || s4 == null)
                     {
-                        s1 ??= nCurrent - nLast;
-                        s2 ??= nCurrent - nLast;
-                        s3 ??= nCurrent - nLast;
-                        s4 ??= nCurrent - nLast;
+                        s1 ??= (sbyte)(nCurrent - nLast);
+                        s2 ??= (sbyte)(nCurrent - nLast);
+                        s3 ??= (sbyte)(nCurrent - nLast);
+                        s4 ??= (sbyte)(nCurrent - nLast);
                         nLast = nCurrent;
                         continue;
                     }
@@ -65,7 +65,7 @@ namespace AdventOfCode
                     s1 = s2;
                     s2 = s3;
                     s3 = s4;
-                    s4 = nCurrent - nLast;
+                    s4 = (sbyte)(nCurrent - nLast);
 
                     var key = (starting, s1: s1.Value, s2: s2.Value, s3: s3.Value, s4: s4.Value);
                     if (!sequenceCounts.TryGetValue(key, out _))
@@ -85,13 +85,8 @@ namespace AdventOfCode
 
             long bestSum = 0;
 
-            foreach (var sequenceSum in sequenceCounts.GroupBy(s => new { s.Key.s1, s.Key.s2, s.Key.s3, s.Key.s4 }).Select(s => s.Sum(v => v.Value)))
-            {
-                if (sequenceSum > bestSum)
-                {
-                    bestSum = sequenceSum;
-                }
-            }
+            // Find 4 price change sequence across all starting values which produces the highest sum of bananas
+            bestSum = sequenceCounts.GroupBy(s => new { s.Key.s1, s.Key.s2, s.Key.s3, s.Key.s4 }).Select(s => s.Sum(v => v.Value)).Max();
 
             Console.WriteLine($"Most bananas from best sequence: {bestSum}");
             //1701
