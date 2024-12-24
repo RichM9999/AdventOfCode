@@ -1,8 +1,4 @@
 ﻿//https://adventofcode.com/2024/day/24
-using System.ComponentModel.Design;
-using System.Linq;
-using System.Reflection.Metadata;
-
 namespace AdventOfCode
 {
     class Day24
