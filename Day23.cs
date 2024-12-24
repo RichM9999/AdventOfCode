@@ -1,115 +1,176 @@
 ﻿//https://adventofcode.com/2024/day/23
-using System.Security.Cryptography;
-using System.Xml.Linq;
-
 namespace AdventOfCode
 {
     class Day23
     {
         List<(string from, string to)> connections;
+        List<string> distinctNodes;
         Dictionary<string, List<string>> graph = new Dictionary<string, List<string>>();
 
         public Day23()
         {
             connections = [];
+            distinctNodes = [];
             graph = [];
         }
 
         public void Run()
         {
-            GetData();
-
-            // Part 1
             var start = DateTime.Now;
 
-            List<(string c1, string c2, string c3)> triplets = [];
+            GetData();
 
-            foreach (var connection in connections.OrderBy(c => c.from).ThenBy(c => c.to))
+            distinctNodes = connections
+                                .Select(c => c.from)
+                                .Distinct()
+                                .ToList()
+                                .Union(connections
+                                            .Select(c => c.to)
+                                            .Distinct()
+                                            .ToList())
+                                .ToList();
+            distinctNodes.Sort();
+
+            foreach (var node in distinctNodes)
             {
-                var c1 = connection.from;
-                var c2 = connection.to;
+                var edges = connections
+                                .Where(c => c.from == node)
+                                .Select(c => c.to)
+                                .ToList()
+                                .Union(connections
+                                        .Where(c => c.to == node)
+                                        .Select(c => c.from)
+                                        .ToList())
+                                .ToList();
+                edges.Sort();
 
-                foreach (var secondary in connections)
-                {
-                    if ((secondary.from == c2 || secondary.to == c2) && secondary.from != c1)
-                    {
-                        var c3 = secondary.from == c2 ? secondary.to : secondary.from;
-
-                        if (connections.Any(c => (c.from == c3 && c.to == c1) || (c.to == c3 && c.from == c1)))
-                        {
-                            var tripletParts = new List<string> { c1, c2, c3 };
-                            var t1 = tripletParts.OrderBy(c => c).First();
-                            var t2 = tripletParts.OrderBy(c => c).Skip(1).First();
-                            var t3 = tripletParts.OrderBy(c => c).Last();
-
-                            if (!triplets.Any(t => t == (t1, t2, t3)))
-                            {
-                                triplets.Add((t1, t2, t3));
-                            }
-                        }
-                    }
-                }
+                graph.Add(node, edges);
             }
 
-            Console.WriteLine($"Triplets with computer name starting with T: {triplets.Count(t => t.c1.StartsWith("t") || t.c2.StartsWith("t") || t.c3.StartsWith("t"))}");
+            Console.WriteLine($"Build nodes and graph");
+            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
+
+            // Part 1
+            start = DateTime.Now;
+
+            // Get cliques up to 3 members
+            var triplets = GetCliques(3)
+                .Where(c => c.Count == 3)
+                // Convert to csv string
+                .Select(c => string.Join(',', c))
+                // Distinct
+                .Distinct()
+                .ToList();
+
+            // Count where contains ",t" 
+            Console.WriteLine($"Triplets with computer name starting with T: {triplets.Count(c => ("," + c).Contains(",t"))}");
             // 1175
             Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
 
             // Part 2
             start = DateTime.Now;
-            Dictionary<string, int> adjacentPairs = [];
-            List<List<string>> cliques = [];
 
-            var distinctNodes = connections.Select(c => c.from).Distinct().ToList();
-            distinctNodes = distinctNodes.Union(connections.Select(c => c.to).Distinct()).ToList();
+            // Get longest clique
+            var bestClique = GetCliques(int.MaxValue)
+                                .OrderByDescending(c => c.Count)
+                                .First();
 
-            foreach (var node in distinctNodes)
-            {
-                var edges = connections.Where(c => c.from == node).Select(c => c.to).ToList();
-                edges = edges.Union(connections.Where(c => c.to == node).Select(c => c.from)).ToList();
+            // In computer name order
+            bestClique.Sort();
 
-                graph.Add(node, edges);
-            }
+            // Concatenate computer names with commas to produce password
+            var password = string.Join(',', bestClique);
 
-            int maximumNeighbors = graph[distinctNodes[distinctNodes.Count - 1]].Count;
+            Console.WriteLine($"Password: {password}");
+            // bw,dr,du,ha,mm,ov,pj,qh,tz,uv,vq,wq,xw
+            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
+        }
 
+        List<List<string>> GetCliques(int maxCliqueSize)
+        {
             // *****
             // Bron-Kerbosch implementation 
             // Based on: https://topaz.github.io/paste/#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
             // *****
+
+            List<List<string>> cliques = [];
+
+            // Look through every node
             foreach (var node1 in distinctNodes)
             {
-                foreach (var node2 in graph[node1])
+                // Look through that node's adjacent nodes
+                foreach (var node1Adjacent in graph[node1])
                 {
+                    // Start a possible clique of these two adjacent nodes
                     List<string> possibleClique = [];
                     possibleClique.Add(node1);
-                    possibleClique.Add(node2);
+                    possibleClique.Add(node1Adjacent);
 
-                    adjacentPairs[node1 + node2] = 0;
-
-                    foreach (var nodeb2 in graph[node1])
+                    // Look through the other adjacent nodes in node1, besides node1Adjacent
+                    foreach (var node1AlsoAdjacent in graph[node1])
                     {
-                        if (graph[node2].Contains(nodeb2))
+                        // Skip node1Adjacent is the same as node1AlsoAdjacent
+                        if (node1AlsoAdjacent == node1Adjacent)
+                            continue;
+
+                        // If node1Adjacent also contains this node adjacent to node1, add it to the possible clique
+                        if (graph[node1Adjacent].Contains(node1AlsoAdjacent))
                         {
-                            adjacentPairs[node1 + node2]++;
-                            possibleClique.Add(nodeb2);
+                            possibleClique.Add(node1AlsoAdjacent);
+
+                            // If possible clique size = max clique size and it's a clique
+                            if (possibleClique.Count == maxCliqueSize && IsClique(possibleClique))
+                            {
+                                // sort the members
+                                possibleClique.Sort();
+
+                                // Add to list of cliques
+                                cliques.Add(possibleClique);
+
+                                // Reset possible clique to starting two nodes to find other possible cliques
+                                // of this max size related to node1 and node1Adjacent
+                                possibleClique = [];
+                                possibleClique.Add(node1);
+                                possibleClique.Add(node1Adjacent);
+                            }
                         }
                     }
 
+                    // Check possible clique for closure
                     if (IsClique(possibleClique))
                     {
+                        // Found closure, found a clique, add to list
+                        possibleClique.Sort();
                         cliques.Add(possibleClique);
                     }
                 }
             }
 
-            var bestClique = cliques.OrderByDescending(c => c.Count).First();
-            bestClique.Sort();
+            return cliques;
+        }
 
-            var password = string.Join(',', bestClique.ToArray());
+        bool IsClique(List<string> nodes)
+        {
+            // Check that every node in list is adjacent to every other node
+            for (var  n1 = 0; n1 < nodes.Count - 1; n1++)
+            {
+                for (int n2 = n1 + 1; n2 < nodes.Count; n2++)
+                {
+                    // Get a pair of nodes
+                    var node1 = nodes[n1];
+                    var node2 = nodes[n2];
 
-            Console.WriteLine($"Password: {password}");
-            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
+                    // Check if the graph of node1 contains node 2
+                    if (!graph[node1].Contains(node2))
+                    {
+                        // Nodes are not adjacent - not a clique
+                        return false;
+                    }
+                }
+            }
+
+            // All nodes are adjacent
+            return true;
         }
 
         void AddConnection(string from, string to)
@@ -3534,27 +3595,6 @@ namespace AdventOfCode
             AddConnection("ko", "pu");
             AddConnection("zp", "kk");
             AddConnection("vz", "sd");
-        }
-
-        bool IsClique(List<string> nodes)
-        {
-            for (int n1 = 0; n1 < nodes.Count - 1; n1++)
-            {
-                for (int n2 = n1 + 1; n2 < nodes.Count; n2++)
-                {
-                    var node1 = nodes[n1];
-                    var node2 = nodes[n2];
-
-                    if (!graph[node1].Contains(node2))
-                    { 
-                        // Nodes are not adjacent - not a clique
-                        return false; 
-                    }
-                }
-            }
-
-            // All nodes are adjacent
-            return true;
         }
     }
 }
