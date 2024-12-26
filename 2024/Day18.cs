@@ -1,5 +1,5 @@
 ﻿//https://adventofcode.com/2024/day/18
-namespace AdventOfCode
+namespace AdventOfCode.Year2024
 {
     using Coordinate = (int x, int y);
 

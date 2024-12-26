@@ -1,5 +1,5 @@
 ﻿//https://adventofcode.com/2024/day/8
-namespace AdventOfCode
+namespace AdventOfCode.Year2024
 {
     class Day8
     {

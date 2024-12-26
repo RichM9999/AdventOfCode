@@ -1,7 +1,7 @@
 ﻿//https://adventofcode.com/2024/day/21
 
 // Based on https://github.com/boombuler/adventofcode/blob/master/2024/Day21.cs
-namespace AdventOfCode
+namespace AdventOfCode.Year2024
 {
     using System.Text;
 

@@ -100,7 +100,6 @@ namespace AdventOfCode.Year2023
                             default:
                                 throw new Exception(cubeInfo[1]);
                         }
-
                     }
                 }
 

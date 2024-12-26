@@ -1,7 +1,7 @@
 ﻿//https://adventofcode.com/2024/day/14
 using System.Drawing;
 
-namespace AdventOfCode
+namespace AdventOfCode.Year2024
 {
     class Day14
     {

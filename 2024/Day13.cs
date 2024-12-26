@@ -2,7 +2,7 @@
 using MathNet.Numerics.LinearAlgebra.Complex;
 using System.Numerics;
 
-namespace AdventOfCode
+namespace AdventOfCode.Year2024
 {
     class Day13
     {
