@@ -4,7 +4,7 @@
     {
         static void Main()
         {
-            var day = new Year2023.Day6();
+            var day = new Year2023.Day8();
             day.Run();
        }
     }
