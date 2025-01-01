@@ -1,7 +1,4 @@
 ﻿//https://adventofcode.com/2023/day/12
-using MathNet.Numerics.Distributions;
-using System.Text.RegularExpressions;
-
 namespace AdventOfCode.Year2023
 {
     class Day12
