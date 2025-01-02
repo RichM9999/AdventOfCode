@@ -1,8 +1,6 @@
 ﻿//https://adventofcode.com/2023/day/14
 namespace AdventOfCode.Year2023
 {
-    using Coordinate = (int x, int y);
-
     class Day14
     {
         const int mapSize = 100;
