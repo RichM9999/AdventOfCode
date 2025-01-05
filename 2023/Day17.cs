@@ -272,68 +272,68 @@ namespace AdventOfCode.Year2023
             AddMapRow(row++, "212332332122311233232144222314232411222234524534114233421351225511124345212225254141552443333145115143533131314323233434442412333333132123221");
             AddMapRow(row++, "211212322131311231132322134223411213222122134314131213545541433115144333341122311253343145513421442314131434121434213141443133322212211323122");
         }
-    }
 
-    class Direction(int row, int col)
-    {
-        public readonly int Row = row;
-        public readonly int Col = col;
-
-        public Direction TurnLeft()
+        internal class Direction(int row, int col)
         {
-            return new Direction(-Col, Row);
+            public readonly int Row = row;
+            public readonly int Col = col;
+
+            public Direction TurnLeft()
+            {
+                return new Direction(-Col, Row);
+            }
+
+            public Direction TurnRight()
+            {
+                return new Direction(Col, -Row);
+            }
+
+            public static Direction Up = new(-1, 0);
+            public static Direction Down = new(1, 0);
+            public static Direction Left = new(0, -1);
+            public static Direction Right = new(0, 1);
         }
 
-        public Direction TurnRight()
+        internal class Path
         {
-            return new Direction(Col, -Row);
+            public Path(Position position, Direction direction, int length)
+            {
+                Position = position;
+                Direction = direction;
+                StraightLineLength = length;
+                Heat = 0;
+            }
+
+            public string PathKey()
+            {
+                return $"{Position.Row},{Position.Col},{Direction.Row},{Direction.Col},{StraightLineLength}";
+            }
+
+            public Position Position { get; set; }
+            public Direction Direction { get; set; }
+            public int StraightLineLength { get; set; }
+            public int Heat { get; set; }
         }
 
-        public static Direction Up = new(-1, 0);
-        public static Direction Down = new(1, 0);
-        public static Direction Left = new(0, -1);
-        public static Direction Right = new(0, 1);
-    }
-
-    class Path
-    {
-        public Path(Position position, Direction direction, int length)
+        internal class Position(int row, int col) : IEquatable<Position>
         {
-            Position = position;
-            Direction = direction;
-            StraightLineLength = length;
-            Heat = 0;
-        }
+            public readonly int Row = row;
+            public readonly int Col = col;
 
-        public string PathKey()
-        {
-            return $"{Position.Row},{Position.Col},{Direction.Row},{Direction.Col},{StraightLineLength}";
-        }
+            public Position Move(Direction dir)
+            {
+                return new Position(Row + dir.Row, Col + dir.Col);
+            }
 
-        public Position Position { get; set; }
-        public Direction Direction { get; set; }
-        public int StraightLineLength { get; set; }
-        public int Heat { get; set; }
-    }
+            public override int GetHashCode()
+            {
+                return Row * 1000 + Col;
+            }
 
-    class Position(int row, int col) : IEquatable<Position>
-    {
-        public readonly int Row = row;
-        public readonly int Col = col;
-
-        public Position Move(Direction dir)
-        {
-            return new Position(Row + dir.Row, Col + dir.Col);
-        }
-
-        public override int GetHashCode()
-        {
-            return Row * 1000 + Col;
-        }
-
-        public bool Equals(Position? other)
-        {
-            return other != null && this.Row == other.Row && this.Col == other.Col;
+            public bool Equals(Position? other)
+            {
+                return other != null && this.Row == other.Row && this.Col == other.Col;
+            }
         }
     }
 }

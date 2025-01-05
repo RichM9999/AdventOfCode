@@ -1,0 +1,844 @@
+﻿//https://adventofcode.com/2023/day/18
+namespace AdventOfCode.Year2023
+{
+    using Coordinate = (long x, long y);
+
+    class Day18
+    {
+        List<PlanStep> digPlan;
+        List<Coordinate> vertices;
+
+        public Day18()
+        {
+            digPlan = [];
+            vertices = [];
+        }
+
+        public void Run()
+        {
+            var startTime = DateTime.Now;
+
+            digPlan = [];
+            vertices = [];
+
+            SetupDigPlan(false);
+
+            Console.WriteLine($"Cubic meters total: {ProcessDigPlan()}");
+            // 56923
+            Console.WriteLine($"{(DateTime.Now - startTime).TotalMilliseconds}ms");
+
+            startTime = DateTime.Now;
+
+            digPlan = [];
+            vertices = [];
+
+            SetupDigPlan(true);
+
+            Console.WriteLine($"Cubic meters total: {ProcessDigPlan()}");
+            // 66296566363189
+            Console.WriteLine($"{(DateTime.Now - startTime).TotalMilliseconds}ms");
+        }
+
+        long ProcessDigPlan()
+        {
+            Coordinate location = (0, 0);
+            long perimeter = 0;
+
+            foreach (var step in digPlan)
+            {
+                perimeter += step.Count;
+
+                location = Move(location, step.Direction, step.Count);
+
+                vertices.Add(location);
+            }
+
+            return CalculateArea(vertices, perimeter);
+        }
+
+        Coordinate Move(Coordinate start, char direction, long amount)
+        {
+            switch (direction)
+            {
+                case 'R':
+                case '0':
+                    return (start.x + amount, start.y);
+                case 'D':
+                case '1':
+                    return (start.x, start.y + amount);
+                case 'L':
+                case '2':
+                    return (start.x - amount, start.y);
+                case 'U':
+                case '3':
+                    return (start.x, start.y - amount);
+            }
+
+            return (-1, -1);
+        }
+
+        // Shoelace formula from: https://topaz.github.io/paste/#XQAAAQCTCQAAAAAAAAA3GEn9/eN2jGGty61rWWYfKolrwcmiXJJFEIkWpH6zP/vz/fuWwupmOY9rkg+tvnehJmeP1EDNXL2mHJYOcJYVGn7Z/+4cR3AIsoJKJrZD73ohCvtpg6lf3DYfpWYDOcqfMK6511c1ZWzzsR6nO5YTrpkEh26Lu5rCDO7epmiWdsE/4/SHPgG9YrRupzWWzY0xKNnpBH3bjEiRRprkI3nfGHNNOCFP42DVyIfbxBRAqLq6bgYcPY/Ue7tJVAC7ra0TrhjDOfC2oFAEX894vuemuaz6pAZzqvZ8JKz7zWOkfWeDLt/oqA56K0T2Ommh0vJiE1lCgcutaZmxq/nISVj1QeWgqACPtX2NkWGQZC0rJxPWsikxC6pYDij68k2MV8QNKlAmb5VdeYyAyCtCxVQsTCGdAdY6a0BI855yvB8ovoycvovdx1pCxw4aVq/qPre9cuPsD/2iWwFs/Hobfu1Nr+ncEp0yu4qf1bR5mqH8SoPBiDIQIVGxW+bVIx7G8t7kmw8Gv5bxTTRrIpQZzxrAD5a5EbDkih29qnbOatX48aSbcCXSG66kfFLzwtmRBzhWwS5xtT6/7M1av8NW6MNK/VBNXI0dQ38tPdhamJa91mXzmvBtpQrWvYdJoL4SC9+VyIEvUb4JKOBOtwfp3bAF+UBUw92mXjBulYBQUTHYn7/sQKieJ03oRlefGGgk1CG2GoSlxNldMCQsTOA2lAQwwM7Ks5rUyVekG1U69uAG/utz0dW2XWS7W0z8PhA/gMdTzAvPKpUiFejjv4stUDeOl7j3zv6jJgx6yYLsJFZbgZwjeV02TUedM3Ci3qUcDfxZXf8kg5lGEy04WHEEXMamv8VISI8TsDpo/X4bofKf1MFpr2dCVex+Q0PruS66LBRmpWk6LsZjrk0zFeg4ayofZTK4Djsc4bfXfDT2WMnhdv9lyyQA
+        private static long CalculateArea(List<Coordinate> vertices, long perimeter)
+        {
+            long area = 0;
+            for (var i = 0; i < vertices.Count - 1; ++i)
+            {
+                area += (vertices[i].y + vertices[i + 1].y) * (vertices[i].x - vertices[i + 1].x);
+            }
+            area += (vertices[^1].y + vertices[0].y) * (vertices[^1].x - vertices[0].x);
+            area += perimeter;
+            area >>= 1;
+
+            return ++area;
+        }
+
+        void AddDigPlanRow(bool part2, char direction, int count, string color)
+        {
+            if (part2)
+            {
+                direction = color[^2];
+                count = Int32.Parse(color[2..7], System.Globalization.NumberStyles.HexNumber);
+            }
+
+            digPlan.Add(new PlanStep(direction, count));
+        }
+
+        void SetupDigPlan(bool part2)
+        {
+            AddDigPlanRow(part2, 'R', 5, "(#2f3630)");
+            AddDigPlanRow(part2, 'U', 9, "(#54a1a3)");
+            AddDigPlanRow(part2, 'R', 5, "(#05bce0)");
+            AddDigPlanRow(part2, 'U', 3, "(#008843)");
+            AddDigPlanRow(part2, 'R', 5, "(#6690d0)");
+            AddDigPlanRow(part2, 'U', 4, "(#008841)");
+            AddDigPlanRow(part2, 'R', 5, "(#651d10)");
+            AddDigPlanRow(part2, 'U', 7, "(#830023)");
+            AddDigPlanRow(part2, 'R', 8, "(#4750a2)");
+            AddDigPlanRow(part2, 'U', 7, "(#6a1001)");
+            AddDigPlanRow(part2, 'R', 3, "(#114a72)");
+            AddDigPlanRow(part2, 'D', 5, "(#21dbf3)");
+            AddDigPlanRow(part2, 'R', 3, "(#4523f2)");
+            AddDigPlanRow(part2, 'U', 4, "(#3a1e43)");
+            AddDigPlanRow(part2, 'R', 4, "(#2eef10)");
+            AddDigPlanRow(part2, 'D', 4, "(#352183)");
+            AddDigPlanRow(part2, 'R', 5, "(#2eef12)");
+            AddDigPlanRow(part2, 'D', 6, "(#1fd943)");
+            AddDigPlanRow(part2, 'L', 7, "(#5c0bd2)");
+            AddDigPlanRow(part2, 'D', 5, "(#32d3b1)");
+            AddDigPlanRow(part2, 'L', 5, "(#47d3d0)");
+            AddDigPlanRow(part2, 'D', 3, "(#3032e1)");
+            AddDigPlanRow(part2, 'R', 2, "(#47d3d2)");
+            AddDigPlanRow(part2, 'D', 4, "(#4dee61)");
+            AddDigPlanRow(part2, 'R', 4, "(#044a92)");
+            AddDigPlanRow(part2, 'D', 4, "(#494b23)");
+            AddDigPlanRow(part2, 'R', 2, "(#132772)");
+            AddDigPlanRow(part2, 'D', 3, "(#2186a3)");
+            AddDigPlanRow(part2, 'R', 7, "(#49e542)");
+            AddDigPlanRow(part2, 'U', 3, "(#864783)");
+            AddDigPlanRow(part2, 'R', 3, "(#3afdd2)");
+            AddDigPlanRow(part2, 'U', 5, "(#2ab8d1)");
+            AddDigPlanRow(part2, 'R', 6, "(#2d5072)");
+            AddDigPlanRow(part2, 'D', 5, "(#362ab1)");
+            AddDigPlanRow(part2, 'R', 4, "(#2d5070)");
+            AddDigPlanRow(part2, 'U', 5, "(#46eaa1)");
+            AddDigPlanRow(part2, 'R', 9, "(#183c12)");
+            AddDigPlanRow(part2, 'U', 3, "(#494b21)");
+            AddDigPlanRow(part2, 'R', 3, "(#584d32)");
+            AddDigPlanRow(part2, 'U', 4, "(#6a1003)");
+            AddDigPlanRow(part2, 'R', 3, "(#618682)");
+            AddDigPlanRow(part2, 'U', 4, "(#5a1853)");
+            AddDigPlanRow(part2, 'R', 6, "(#30cf00)");
+            AddDigPlanRow(part2, 'U', 6, "(#6b3a23)");
+            AddDigPlanRow(part2, 'R', 5, "(#5e1260)");
+            AddDigPlanRow(part2, 'U', 2, "(#20b7d3)");
+            AddDigPlanRow(part2, 'R', 3, "(#1d2ec0)");
+            AddDigPlanRow(part2, 'U', 10, "(#89f613)");
+            AddDigPlanRow(part2, 'R', 5, "(#16c5b0)");
+            AddDigPlanRow(part2, 'U', 3, "(#26b1d3)");
+            AddDigPlanRow(part2, 'R', 4, "(#475e70)");
+            AddDigPlanRow(part2, 'U', 3, "(#007223)");
+            AddDigPlanRow(part2, 'R', 5, "(#3cf870)");
+            AddDigPlanRow(part2, 'U', 3, "(#851f83)");
+            AddDigPlanRow(part2, 'R', 8, "(#326e40)");
+            AddDigPlanRow(part2, 'U', 5, "(#043ad3)");
+            AddDigPlanRow(part2, 'R', 4, "(#2eb0a0)");
+            AddDigPlanRow(part2, 'U', 5, "(#26e791)");
+            AddDigPlanRow(part2, 'R', 3, "(#0b6950)");
+            AddDigPlanRow(part2, 'U', 7, "(#323af1)");
+            AddDigPlanRow(part2, 'L', 3, "(#0b6952)");
+            AddDigPlanRow(part2, 'U', 3, "(#4ffc41)");
+            AddDigPlanRow(part2, 'L', 4, "(#721f70)");
+            AddDigPlanRow(part2, 'U', 8, "(#0137b1)");
+            AddDigPlanRow(part2, 'R', 4, "(#5c9d22)");
+            AddDigPlanRow(part2, 'U', 3, "(#55ff21)");
+            AddDigPlanRow(part2, 'R', 5, "(#5c9d20)");
+            AddDigPlanRow(part2, 'U', 3, "(#3b2d71)");
+            AddDigPlanRow(part2, 'R', 5, "(#721f72)");
+            AddDigPlanRow(part2, 'U', 7, "(#1fa921)");
+            AddDigPlanRow(part2, 'R', 8, "(#3012f0)");
+            AddDigPlanRow(part2, 'D', 5, "(#4c6a91)");
+            AddDigPlanRow(part2, 'R', 8, "(#61af70)");
+            AddDigPlanRow(part2, 'D', 4, "(#4c6a93)");
+            AddDigPlanRow(part2, 'R', 6, "(#2e21b0)");
+            AddDigPlanRow(part2, 'D', 2, "(#7df243)");
+            AddDigPlanRow(part2, 'R', 2, "(#108f72)");
+            AddDigPlanRow(part2, 'D', 9, "(#239da3)");
+            AddDigPlanRow(part2, 'R', 5, "(#1f8fb0)");
+            AddDigPlanRow(part2, 'D', 8, "(#8e8b71)");
+            AddDigPlanRow(part2, 'R', 5, "(#5a6f50)");
+            AddDigPlanRow(part2, 'D', 2, "(#8e8b73)");
+            AddDigPlanRow(part2, 'R', 3, "(#159190)");
+            AddDigPlanRow(part2, 'D', 5, "(#5f70a3)");
+            AddDigPlanRow(part2, 'L', 5, "(#012372)");
+            AddDigPlanRow(part2, 'D', 3, "(#04bf23)");
+            AddDigPlanRow(part2, 'L', 5, "(#72bbe2)");
+            AddDigPlanRow(part2, 'D', 6, "(#04bf21)");
+            AddDigPlanRow(part2, 'L', 3, "(#1bb142)");
+            AddDigPlanRow(part2, 'D', 3, "(#0f6693)");
+            AddDigPlanRow(part2, 'L', 4, "(#108f70)");
+            AddDigPlanRow(part2, 'D', 6, "(#0ecae3)");
+            AddDigPlanRow(part2, 'L', 6, "(#407170)");
+            AddDigPlanRow(part2, 'D', 8, "(#10ff11)");
+            AddDigPlanRow(part2, 'L', 7, "(#18f910)");
+            AddDigPlanRow(part2, 'D', 6, "(#10ff13)");
+            AddDigPlanRow(part2, 'R', 2, "(#483d30)");
+            AddDigPlanRow(part2, 'D', 6, "(#30a891)");
+            AddDigPlanRow(part2, 'R', 4, "(#1ed8b0)");
+            AddDigPlanRow(part2, 'D', 5, "(#688901)");
+            AddDigPlanRow(part2, 'R', 4, "(#130de0)");
+            AddDigPlanRow(part2, 'D', 6, "(#4d20e1)");
+            AddDigPlanRow(part2, 'R', 5, "(#4b1000)");
+            AddDigPlanRow(part2, 'U', 7, "(#877bf1)");
+            AddDigPlanRow(part2, 'R', 2, "(#395410)");
+            AddDigPlanRow(part2, 'U', 4, "(#877bf3)");
+            AddDigPlanRow(part2, 'R', 4, "(#167f10)");
+            AddDigPlanRow(part2, 'D', 2, "(#486f11)");
+            AddDigPlanRow(part2, 'R', 7, "(#54e8d0)");
+            AddDigPlanRow(part2, 'D', 2, "(#504301)");
+            AddDigPlanRow(part2, 'R', 2, "(#8035e2)");
+            AddDigPlanRow(part2, 'D', 7, "(#433471)");
+            AddDigPlanRow(part2, 'R', 3, "(#8035e0)");
+            AddDigPlanRow(part2, 'D', 3, "(#26cad1)");
+            AddDigPlanRow(part2, 'R', 3, "(#4b3dc0)");
+            AddDigPlanRow(part2, 'D', 5, "(#802d11)");
+            AddDigPlanRow(part2, 'R', 2, "(#05af00)");
+            AddDigPlanRow(part2, 'D', 4, "(#3b3f31)");
+            AddDigPlanRow(part2, 'R', 5, "(#0dfed0)");
+            AddDigPlanRow(part2, 'D', 8, "(#3b4341)");
+            AddDigPlanRow(part2, 'L', 6, "(#489830)");
+            AddDigPlanRow(part2, 'D', 3, "(#3b4343)");
+            AddDigPlanRow(part2, 'L', 3, "(#4e0bd0)");
+            AddDigPlanRow(part2, 'D', 7, "(#0f7fd1)");
+            AddDigPlanRow(part2, 'R', 6, "(#1c6dd0)");
+            AddDigPlanRow(part2, 'D', 2, "(#318d21)");
+            AddDigPlanRow(part2, 'R', 3, "(#0cb8f2)");
+            AddDigPlanRow(part2, 'D', 6, "(#68acd1)");
+            AddDigPlanRow(part2, 'R', 2, "(#432822)");
+            AddDigPlanRow(part2, 'D', 3, "(#218ee1)");
+            AddDigPlanRow(part2, 'R', 11, "(#661ec2)");
+            AddDigPlanRow(part2, 'U', 3, "(#218ee3)");
+            AddDigPlanRow(part2, 'R', 5, "(#0b10d2)");
+            AddDigPlanRow(part2, 'U', 4, "(#2233f1)");
+            AddDigPlanRow(part2, 'L', 3, "(#2a5330)");
+            AddDigPlanRow(part2, 'U', 3, "(#0df7d1)");
+            AddDigPlanRow(part2, 'L', 9, "(#5ff680)");
+            AddDigPlanRow(part2, 'U', 4, "(#2b9701)");
+            AddDigPlanRow(part2, 'R', 12, "(#8b68d0)");
+            AddDigPlanRow(part2, 'U', 3, "(#2b9703)");
+            AddDigPlanRow(part2, 'L', 5, "(#086f10)");
+            AddDigPlanRow(part2, 'U', 7, "(#1f1431)");
+            AddDigPlanRow(part2, 'R', 4, "(#6937b0)");
+            AddDigPlanRow(part2, 'U', 5, "(#2cce51)");
+            AddDigPlanRow(part2, 'R', 3, "(#26cb50)");
+            AddDigPlanRow(part2, 'D', 8, "(#3ee1c1)");
+            AddDigPlanRow(part2, 'R', 6, "(#3c8a40)");
+            AddDigPlanRow(part2, 'D', 5, "(#7e7211)");
+            AddDigPlanRow(part2, 'R', 7, "(#7190e0)");
+            AddDigPlanRow(part2, 'D', 3, "(#036101)");
+            AddDigPlanRow(part2, 'R', 6, "(#6110b0)");
+            AddDigPlanRow(part2, 'D', 3, "(#89da01)");
+            AddDigPlanRow(part2, 'L', 12, "(#1f2cc0)");
+            AddDigPlanRow(part2, 'D', 3, "(#2b7181)");
+            AddDigPlanRow(part2, 'L', 4, "(#3942b0)");
+            AddDigPlanRow(part2, 'D', 5, "(#10f821)");
+            AddDigPlanRow(part2, 'L', 2, "(#61ae90)");
+            AddDigPlanRow(part2, 'D', 6, "(#04dee1)");
+            AddDigPlanRow(part2, 'L', 6, "(#2fc950)");
+            AddDigPlanRow(part2, 'D', 2, "(#04dee3)");
+            AddDigPlanRow(part2, 'L', 8, "(#353d90)");
+            AddDigPlanRow(part2, 'D', 4, "(#1e21b1)");
+            AddDigPlanRow(part2, 'L', 3, "(#46fa00)");
+            AddDigPlanRow(part2, 'D', 4, "(#3ea393)");
+            AddDigPlanRow(part2, 'R', 5, "(#5c2e32)");
+            AddDigPlanRow(part2, 'D', 5, "(#361be3)");
+            AddDigPlanRow(part2, 'R', 6, "(#2ddc12)");
+            AddDigPlanRow(part2, 'U', 4, "(#4b1a83)");
+            AddDigPlanRow(part2, 'R', 6, "(#135722)");
+            AddDigPlanRow(part2, 'U', 6, "(#521483)");
+            AddDigPlanRow(part2, 'R', 9, "(#7382b2)");
+            AddDigPlanRow(part2, 'D', 6, "(#239da3)");
+            AddDigPlanRow(part2, 'R', 3, "(#3ed420)");
+            AddDigPlanRow(part2, 'D', 4, "(#3a0c73)");
+            AddDigPlanRow(part2, 'R', 6, "(#5a68d0)");
+            AddDigPlanRow(part2, 'D', 3, "(#76f053)");
+            AddDigPlanRow(part2, 'L', 5, "(#244ec0)");
+            AddDigPlanRow(part2, 'D', 4, "(#062573)");
+            AddDigPlanRow(part2, 'L', 8, "(#053c50)");
+            AddDigPlanRow(part2, 'D', 5, "(#0bfac3)");
+            AddDigPlanRow(part2, 'R', 3, "(#123e30)");
+            AddDigPlanRow(part2, 'D', 7, "(#21c2c3)");
+            AddDigPlanRow(part2, 'R', 6, "(#0b11b0)");
+            AddDigPlanRow(part2, 'D', 3, "(#6781f3)");
+            AddDigPlanRow(part2, 'R', 9, "(#720e70)");
+            AddDigPlanRow(part2, 'D', 3, "(#7ddd13)");
+            AddDigPlanRow(part2, 'L', 11, "(#33d6f0)");
+            AddDigPlanRow(part2, 'D', 2, "(#1b2d83)");
+            AddDigPlanRow(part2, 'L', 7, "(#5f0280)");
+            AddDigPlanRow(part2, 'D', 5, "(#579183)");
+            AddDigPlanRow(part2, 'R', 4, "(#5f0282)");
+            AddDigPlanRow(part2, 'D', 6, "(#5c9303)");
+            AddDigPlanRow(part2, 'R', 3, "(#3c6770)");
+            AddDigPlanRow(part2, 'D', 4, "(#2b6333)");
+            AddDigPlanRow(part2, 'R', 5, "(#4f28a0)");
+            AddDigPlanRow(part2, 'U', 5, "(#55d573)");
+            AddDigPlanRow(part2, 'R', 6, "(#2b03a0)");
+            AddDigPlanRow(part2, 'U', 5, "(#244bd3)");
+            AddDigPlanRow(part2, 'R', 5, "(#644122)");
+            AddDigPlanRow(part2, 'U', 7, "(#08ab63)");
+            AddDigPlanRow(part2, 'R', 7, "(#232bc2)");
+            AddDigPlanRow(part2, 'U', 5, "(#71f5e3)");
+            AddDigPlanRow(part2, 'R', 4, "(#060d22)");
+            AddDigPlanRow(part2, 'U', 3, "(#168c63)");
+            AddDigPlanRow(part2, 'R', 4, "(#44efa2)");
+            AddDigPlanRow(part2, 'D', 3, "(#17c163)");
+            AddDigPlanRow(part2, 'R', 9, "(#2ed822)");
+            AddDigPlanRow(part2, 'D', 6, "(#17c161)");
+            AddDigPlanRow(part2, 'R', 10, "(#4b9682)");
+            AddDigPlanRow(part2, 'D', 6, "(#168c61)");
+            AddDigPlanRow(part2, 'R', 6, "(#1ab282)");
+            AddDigPlanRow(part2, 'D', 3, "(#490b43)");
+            AddDigPlanRow(part2, 'L', 6, "(#639022)");
+            AddDigPlanRow(part2, 'D', 4, "(#447151)");
+            AddDigPlanRow(part2, 'L', 5, "(#0596c0)");
+            AddDigPlanRow(part2, 'U', 4, "(#2fba61)");
+            AddDigPlanRow(part2, 'L', 5, "(#0596c2)");
+            AddDigPlanRow(part2, 'D', 4, "(#201131)");
+            AddDigPlanRow(part2, 'L', 3, "(#1f9c52)");
+            AddDigPlanRow(part2, 'D', 3, "(#0c4a23)");
+            AddDigPlanRow(part2, 'R', 9, "(#266412)");
+            AddDigPlanRow(part2, 'D', 3, "(#68bea3)");
+            AddDigPlanRow(part2, 'R', 7, "(#266410)");
+            AddDigPlanRow(part2, 'D', 4, "(#1f3423)");
+            AddDigPlanRow(part2, 'R', 3, "(#51d9c2)");
+            AddDigPlanRow(part2, 'D', 6, "(#1f6633)");
+            AddDigPlanRow(part2, 'R', 8, "(#7382b0)");
+            AddDigPlanRow(part2, 'U', 8, "(#01fca3)");
+            AddDigPlanRow(part2, 'R', 7, "(#3271f0)");
+            AddDigPlanRow(part2, 'U', 4, "(#7ee903)");
+            AddDigPlanRow(part2, 'R', 6, "(#581210)");
+            AddDigPlanRow(part2, 'D', 7, "(#7ee901)");
+            AddDigPlanRow(part2, 'R', 2, "(#12dd60)");
+            AddDigPlanRow(part2, 'U', 7, "(#15a1a3)");
+            AddDigPlanRow(part2, 'R', 6, "(#7c30f0)");
+            AddDigPlanRow(part2, 'U', 2, "(#591961)");
+            AddDigPlanRow(part2, 'R', 3, "(#69efd0)");
+            AddDigPlanRow(part2, 'U', 4, "(#591963)");
+            AddDigPlanRow(part2, 'L', 9, "(#32e7e0)");
+            AddDigPlanRow(part2, 'U', 3, "(#574071)");
+            AddDigPlanRow(part2, 'L', 3, "(#50c6a0)");
+            AddDigPlanRow(part2, 'U', 3, "(#0be261)");
+            AddDigPlanRow(part2, 'L', 5, "(#6ae5c0)");
+            AddDigPlanRow(part2, 'U', 3, "(#5c08b1)");
+            AddDigPlanRow(part2, 'L', 3, "(#7158d0)");
+            AddDigPlanRow(part2, 'U', 2, "(#36fe01)");
+            AddDigPlanRow(part2, 'L', 4, "(#325c22)");
+            AddDigPlanRow(part2, 'U', 9, "(#305be1)");
+            AddDigPlanRow(part2, 'R', 3, "(#325c20)");
+            AddDigPlanRow(part2, 'U', 2, "(#36c0a1)");
+            AddDigPlanRow(part2, 'R', 3, "(#1687d0)");
+            AddDigPlanRow(part2, 'U', 7, "(#6e3d91)");
+            AddDigPlanRow(part2, 'R', 4, "(#69abb2)");
+            AddDigPlanRow(part2, 'U', 4, "(#0a66d1)");
+            AddDigPlanRow(part2, 'R', 4, "(#3091a2)");
+            AddDigPlanRow(part2, 'U', 6, "(#548a01)");
+            AddDigPlanRow(part2, 'R', 3, "(#47a5c2)");
+            AddDigPlanRow(part2, 'U', 3, "(#2a9553)");
+            AddDigPlanRow(part2, 'R', 5, "(#795b32)");
+            AddDigPlanRow(part2, 'U', 3, "(#2a9551)");
+            AddDigPlanRow(part2, 'R', 8, "(#181b72)");
+            AddDigPlanRow(part2, 'U', 7, "(#43b071)");
+            AddDigPlanRow(part2, 'R', 4, "(#443e90)");
+            AddDigPlanRow(part2, 'U', 2, "(#3926e1)");
+            AddDigPlanRow(part2, 'R', 4, "(#6c3760)");
+            AddDigPlanRow(part2, 'U', 4, "(#694dd3)");
+            AddDigPlanRow(part2, 'R', 6, "(#4b1d30)");
+            AddDigPlanRow(part2, 'U', 3, "(#032dd1)");
+            AddDigPlanRow(part2, 'R', 6, "(#101060)");
+            AddDigPlanRow(part2, 'U', 4, "(#032dd3)");
+            AddDigPlanRow(part2, 'L', 6, "(#49c630)");
+            AddDigPlanRow(part2, 'U', 7, "(#694dd1)");
+            AddDigPlanRow(part2, 'L', 2, "(#1df000)");
+            AddDigPlanRow(part2, 'U', 3, "(#2ff181)");
+            AddDigPlanRow(part2, 'L', 8, "(#3617e2)");
+            AddDigPlanRow(part2, 'D', 6, "(#3a3c41)");
+            AddDigPlanRow(part2, 'L', 3, "(#51c8c2)");
+            AddDigPlanRow(part2, 'D', 4, "(#5c01b1)");
+            AddDigPlanRow(part2, 'L', 11, "(#0ca2b0)");
+            AddDigPlanRow(part2, 'U', 2, "(#4333b1)");
+            AddDigPlanRow(part2, 'L', 3, "(#812b52)");
+            AddDigPlanRow(part2, 'U', 8, "(#6f4601)");
+            AddDigPlanRow(part2, 'L', 3, "(#379b22)");
+            AddDigPlanRow(part2, 'U', 2, "(#07d291)");
+            AddDigPlanRow(part2, 'L', 7, "(#49e292)");
+            AddDigPlanRow(part2, 'U', 7, "(#709721)");
+            AddDigPlanRow(part2, 'L', 4, "(#1db7a2)");
+            AddDigPlanRow(part2, 'U', 8, "(#58c9d1)");
+            AddDigPlanRow(part2, 'L', 6, "(#52d210)");
+            AddDigPlanRow(part2, 'U', 5, "(#64a341)");
+            AddDigPlanRow(part2, 'L', 3, "(#1054c0)");
+            AddDigPlanRow(part2, 'U', 7, "(#64a343)");
+            AddDigPlanRow(part2, 'L', 4, "(#61a0b0)");
+            AddDigPlanRow(part2, 'U', 10, "(#187211)");
+            AddDigPlanRow(part2, 'L', 4, "(#5b9920)");
+            AddDigPlanRow(part2, 'U', 4, "(#05d301)");
+            AddDigPlanRow(part2, 'L', 3, "(#0c8ef0)");
+            AddDigPlanRow(part2, 'U', 8, "(#09f161)");
+            AddDigPlanRow(part2, 'L', 4, "(#7fa590)");
+            AddDigPlanRow(part2, 'U', 4, "(#516f31)");
+            AddDigPlanRow(part2, 'L', 3, "(#408e12)");
+            AddDigPlanRow(part2, 'D', 6, "(#3ccd51)");
+            AddDigPlanRow(part2, 'L', 2, "(#4ba672)");
+            AddDigPlanRow(part2, 'D', 10, "(#1fb771)");
+            AddDigPlanRow(part2, 'L', 3, "(#3d8200)");
+            AddDigPlanRow(part2, 'U', 8, "(#195531)");
+            AddDigPlanRow(part2, 'L', 3, "(#6bcfe0)");
+            AddDigPlanRow(part2, 'U', 9, "(#484041)");
+            AddDigPlanRow(part2, 'L', 5, "(#3ae112)");
+            AddDigPlanRow(part2, 'U', 5, "(#6d6931)");
+            AddDigPlanRow(part2, 'R', 4, "(#3ae110)");
+            AddDigPlanRow(part2, 'U', 7, "(#05dd71)");
+            AddDigPlanRow(part2, 'L', 4, "(#4c5332)");
+            AddDigPlanRow(part2, 'U', 6, "(#5df683)");
+            AddDigPlanRow(part2, 'L', 10, "(#3aebd2)");
+            AddDigPlanRow(part2, 'U', 3, "(#5f3f53)");
+            AddDigPlanRow(part2, 'L', 3, "(#815352)");
+            AddDigPlanRow(part2, 'U', 6, "(#5f3f51)");
+            AddDigPlanRow(part2, 'L', 4, "(#28ac32)");
+            AddDigPlanRow(part2, 'U', 4, "(#5df681)");
+            AddDigPlanRow(part2, 'R', 4, "(#3cb5e2)");
+            AddDigPlanRow(part2, 'U', 2, "(#7662f1)");
+            AddDigPlanRow(part2, 'R', 4, "(#322d10)");
+            AddDigPlanRow(part2, 'U', 8, "(#1a81a3)");
+            AddDigPlanRow(part2, 'R', 5, "(#3e2ba0)");
+            AddDigPlanRow(part2, 'D', 4, "(#1a81a1)");
+            AddDigPlanRow(part2, 'R', 3, "(#362bc0)");
+            AddDigPlanRow(part2, 'D', 6, "(#3e19c1)");
+            AddDigPlanRow(part2, 'R', 5, "(#234960)");
+            AddDigPlanRow(part2, 'U', 5, "(#2d2853)");
+            AddDigPlanRow(part2, 'R', 7, "(#56bab0)");
+            AddDigPlanRow(part2, 'U', 4, "(#2d2851)");
+            AddDigPlanRow(part2, 'R', 8, "(#4d6be0)");
+            AddDigPlanRow(part2, 'U', 5, "(#5ad541)");
+            AddDigPlanRow(part2, 'R', 8, "(#1d6e52)");
+            AddDigPlanRow(part2, 'U', 6, "(#077851)");
+            AddDigPlanRow(part2, 'L', 7, "(#45b722)");
+            AddDigPlanRow(part2, 'U', 3, "(#077853)");
+            AddDigPlanRow(part2, 'L', 7, "(#52cf22)");
+            AddDigPlanRow(part2, 'U', 4, "(#07d441)");
+            AddDigPlanRow(part2, 'R', 7, "(#77bb62)");
+            AddDigPlanRow(part2, 'U', 4, "(#1a8641)");
+            AddDigPlanRow(part2, 'R', 7, "(#4c1bf2)");
+            AddDigPlanRow(part2, 'U', 3, "(#2ca611)");
+            AddDigPlanRow(part2, 'R', 3, "(#18b8e2)");
+            AddDigPlanRow(part2, 'D', 3, "(#57ff81)");
+            AddDigPlanRow(part2, 'R', 4, "(#60c622)");
+            AddDigPlanRow(part2, 'D', 7, "(#42e791)");
+            AddDigPlanRow(part2, 'R', 4, "(#1a7550)");
+            AddDigPlanRow(part2, 'D', 6, "(#2645b1)");
+            AddDigPlanRow(part2, 'R', 5, "(#1a7552)");
+            AddDigPlanRow(part2, 'D', 8, "(#4ea9d1)");
+            AddDigPlanRow(part2, 'R', 6, "(#797f00)");
+            AddDigPlanRow(part2, 'D', 2, "(#02b451)");
+            AddDigPlanRow(part2, 'R', 4, "(#375b52)");
+            AddDigPlanRow(part2, 'D', 7, "(#28c491)");
+            AddDigPlanRow(part2, 'R', 7, "(#5e30f2)");
+            AddDigPlanRow(part2, 'D', 9, "(#3f4341)");
+            AddDigPlanRow(part2, 'L', 7, "(#11cf50)");
+            AddDigPlanRow(part2, 'D', 5, "(#82e171)");
+            AddDigPlanRow(part2, 'R', 3, "(#655ee0)");
+            AddDigPlanRow(part2, 'D', 3, "(#189ea1)");
+            AddDigPlanRow(part2, 'R', 3, "(#772e32)");
+            AddDigPlanRow(part2, 'D', 10, "(#177941)");
+            AddDigPlanRow(part2, 'R', 4, "(#06baa2)");
+            AddDigPlanRow(part2, 'D', 11, "(#561461)");
+            AddDigPlanRow(part2, 'R', 2, "(#5c8dd2)");
+            AddDigPlanRow(part2, 'D', 7, "(#561463)");
+            AddDigPlanRow(part2, 'R', 6, "(#36fc22)");
+            AddDigPlanRow(part2, 'D', 5, "(#0cea13)");
+            AddDigPlanRow(part2, 'R', 2, "(#4cc760)");
+            AddDigPlanRow(part2, 'D', 4, "(#4dfe53)");
+            AddDigPlanRow(part2, 'R', 6, "(#323630)");
+            AddDigPlanRow(part2, 'U', 9, "(#566003)");
+            AddDigPlanRow(part2, 'R', 7, "(#7efd92)");
+            AddDigPlanRow(part2, 'D', 9, "(#40f433)");
+            AddDigPlanRow(part2, 'R', 6, "(#080d32)");
+            AddDigPlanRow(part2, 'D', 8, "(#6cf311)");
+            AddDigPlanRow(part2, 'R', 5, "(#35bf72)");
+            AddDigPlanRow(part2, 'D', 3, "(#3b7973)");
+            AddDigPlanRow(part2, 'R', 8, "(#06a632)");
+            AddDigPlanRow(part2, 'D', 4, "(#252293)");
+            AddDigPlanRow(part2, 'R', 4, "(#06a630)");
+            AddDigPlanRow(part2, 'D', 5, "(#35ed03)");
+            AddDigPlanRow(part2, 'R', 7, "(#4d1cd2)");
+            AddDigPlanRow(part2, 'D', 2, "(#4cf4f3)");
+            AddDigPlanRow(part2, 'R', 3, "(#1dd4e2)");
+            AddDigPlanRow(part2, 'D', 3, "(#2b92f3)");
+            AddDigPlanRow(part2, 'R', 4, "(#117530)");
+            AddDigPlanRow(part2, 'D', 4, "(#5ac883)");
+            AddDigPlanRow(part2, 'R', 12, "(#117532)");
+            AddDigPlanRow(part2, 'U', 4, "(#48ca43)");
+            AddDigPlanRow(part2, 'R', 7, "(#708b12)");
+            AddDigPlanRow(part2, 'D', 5, "(#068663)");
+            AddDigPlanRow(part2, 'R', 5, "(#4247e2)");
+            AddDigPlanRow(part2, 'D', 7, "(#704161)");
+            AddDigPlanRow(part2, 'R', 4, "(#4b2b22)");
+            AddDigPlanRow(part2, 'D', 8, "(#13ea71)");
+            AddDigPlanRow(part2, 'R', 4, "(#699472)");
+            AddDigPlanRow(part2, 'D', 5, "(#4d6551)");
+            AddDigPlanRow(part2, 'R', 5, "(#8503c0)");
+            AddDigPlanRow(part2, 'D', 2, "(#281c91)");
+            AddDigPlanRow(part2, 'R', 2, "(#8503c2)");
+            AddDigPlanRow(part2, 'D', 9, "(#33a0c1)");
+            AddDigPlanRow(part2, 'L', 5, "(#4e8ad2)");
+            AddDigPlanRow(part2, 'D', 3, "(#825f21)");
+            AddDigPlanRow(part2, 'L', 5, "(#26aab2)");
+            AddDigPlanRow(part2, 'D', 8, "(#097c71)");
+            AddDigPlanRow(part2, 'L', 6, "(#169832)");
+            AddDigPlanRow(part2, 'D', 4, "(#457031)");
+            AddDigPlanRow(part2, 'L', 7, "(#8cee10)");
+            AddDigPlanRow(part2, 'U', 5, "(#251221)");
+            AddDigPlanRow(part2, 'L', 3, "(#71dce0)");
+            AddDigPlanRow(part2, 'U', 3, "(#331751)");
+            AddDigPlanRow(part2, 'L', 6, "(#7cfe10)");
+            AddDigPlanRow(part2, 'D', 5, "(#617961)");
+            AddDigPlanRow(part2, 'L', 9, "(#7cfe12)");
+            AddDigPlanRow(part2, 'U', 5, "(#04b4d1)");
+            AddDigPlanRow(part2, 'L', 8, "(#379ae0)");
+            AddDigPlanRow(part2, 'D', 8, "(#0c88f1)");
+            AddDigPlanRow(part2, 'L', 4, "(#0ee942)");
+            AddDigPlanRow(part2, 'D', 8, "(#297c01)");
+            AddDigPlanRow(part2, 'R', 5, "(#5a78a2)");
+            AddDigPlanRow(part2, 'D', 6, "(#3db043)");
+            AddDigPlanRow(part2, 'R', 5, "(#7eadd2)");
+            AddDigPlanRow(part2, 'D', 4, "(#3db041)");
+            AddDigPlanRow(part2, 'R', 5, "(#4e5622)");
+            AddDigPlanRow(part2, 'D', 2, "(#381fa1)");
+            AddDigPlanRow(part2, 'R', 6, "(#2cfd90)");
+            AddDigPlanRow(part2, 'D', 4, "(#36bd23)");
+            AddDigPlanRow(part2, 'R', 3, "(#4d18c0)");
+            AddDigPlanRow(part2, 'D', 4, "(#36bd21)");
+            AddDigPlanRow(part2, 'R', 3, "(#1a3d70)");
+            AddDigPlanRow(part2, 'D', 2, "(#6644a1)");
+            AddDigPlanRow(part2, 'R', 12, "(#868912)");
+            AddDigPlanRow(part2, 'D', 4, "(#5cb351)");
+            AddDigPlanRow(part2, 'R', 3, "(#868910)");
+            AddDigPlanRow(part2, 'D', 4, "(#3b3501)");
+            AddDigPlanRow(part2, 'R', 5, "(#1cddb0)");
+            AddDigPlanRow(part2, 'D', 4, "(#4cc9b1)");
+            AddDigPlanRow(part2, 'L', 9, "(#040250)");
+            AddDigPlanRow(part2, 'D', 6, "(#38c721)");
+            AddDigPlanRow(part2, 'L', 7, "(#23e920)");
+            AddDigPlanRow(part2, 'D', 3, "(#08dde3)");
+            AddDigPlanRow(part2, 'L', 8, "(#2c48f0)");
+            AddDigPlanRow(part2, 'D', 4, "(#08dde1)");
+            AddDigPlanRow(part2, 'L', 2, "(#414710)");
+            AddDigPlanRow(part2, 'D', 4, "(#3c36b1)");
+            AddDigPlanRow(part2, 'L', 8, "(#467ab0)");
+            AddDigPlanRow(part2, 'D', 3, "(#034323)");
+            AddDigPlanRow(part2, 'L', 4, "(#67f960)");
+            AddDigPlanRow(part2, 'D', 6, "(#034321)");
+            AddDigPlanRow(part2, 'L', 9, "(#675f90)");
+            AddDigPlanRow(part2, 'D', 6, "(#338083)");
+            AddDigPlanRow(part2, 'L', 5, "(#2b4702)");
+            AddDigPlanRow(part2, 'D', 6, "(#035ab3)");
+            AddDigPlanRow(part2, 'L', 6, "(#4d5642)");
+            AddDigPlanRow(part2, 'D', 7, "(#035ab1)");
+            AddDigPlanRow(part2, 'L', 8, "(#40ff22)");
+            AddDigPlanRow(part2, 'D', 3, "(#495523)");
+            AddDigPlanRow(part2, 'L', 5, "(#83a372)");
+            AddDigPlanRow(part2, 'D', 5, "(#1a5d23)");
+            AddDigPlanRow(part2, 'L', 8, "(#4ef3c2)");
+            AddDigPlanRow(part2, 'D', 4, "(#7515a3)");
+            AddDigPlanRow(part2, 'L', 9, "(#40d0f0)");
+            AddDigPlanRow(part2, 'D', 5, "(#143e73)");
+            AddDigPlanRow(part2, 'L', 8, "(#2ec480)");
+            AddDigPlanRow(part2, 'U', 8, "(#070d81)");
+            AddDigPlanRow(part2, 'R', 4, "(#344d10)");
+            AddDigPlanRow(part2, 'U', 4, "(#070d83)");
+            AddDigPlanRow(part2, 'R', 5, "(#2eb4b0)");
+            AddDigPlanRow(part2, 'U', 5, "(#681243)");
+            AddDigPlanRow(part2, 'R', 3, "(#51a710)");
+            AddDigPlanRow(part2, 'U', 5, "(#8a2821)");
+            AddDigPlanRow(part2, 'R', 7, "(#2faba0)");
+            AddDigPlanRow(part2, 'U', 5, "(#8a2823)");
+            AddDigPlanRow(part2, 'R', 3, "(#3849b0)");
+            AddDigPlanRow(part2, 'U', 6, "(#375b63)");
+            AddDigPlanRow(part2, 'L', 8, "(#3790d0)");
+            AddDigPlanRow(part2, 'U', 7, "(#2f77d1)");
+            AddDigPlanRow(part2, 'L', 6, "(#444dd0)");
+            AddDigPlanRow(part2, 'U', 3, "(#85afe3)");
+            AddDigPlanRow(part2, 'L', 6, "(#656d90)");
+            AddDigPlanRow(part2, 'U', 6, "(#85afe1)");
+            AddDigPlanRow(part2, 'L', 2, "(#1152b0)");
+            AddDigPlanRow(part2, 'U', 3, "(#334491)");
+            AddDigPlanRow(part2, 'R', 4, "(#362670)");
+            AddDigPlanRow(part2, 'U', 7, "(#819361)");
+            AddDigPlanRow(part2, 'L', 4, "(#4fd202)");
+            AddDigPlanRow(part2, 'U', 3, "(#718a21)");
+            AddDigPlanRow(part2, 'L', 5, "(#17bf92)");
+            AddDigPlanRow(part2, 'D', 10, "(#3334f1)");
+            AddDigPlanRow(part2, 'L', 2, "(#43c272)");
+            AddDigPlanRow(part2, 'D', 4, "(#40f041)");
+            AddDigPlanRow(part2, 'L', 5, "(#3afbc2)");
+            AddDigPlanRow(part2, 'D', 6, "(#742533)");
+            AddDigPlanRow(part2, 'L', 8, "(#0ae4c2)");
+            AddDigPlanRow(part2, 'U', 6, "(#146731)");
+            AddDigPlanRow(part2, 'L', 8, "(#2aec82)");
+            AddDigPlanRow(part2, 'D', 2, "(#89fa61)");
+            AddDigPlanRow(part2, 'L', 3, "(#044562)");
+            AddDigPlanRow(part2, 'D', 4, "(#1e14a1)");
+            AddDigPlanRow(part2, 'R', 2, "(#7b0a82)");
+            AddDigPlanRow(part2, 'D', 4, "(#1e14a3)");
+            AddDigPlanRow(part2, 'R', 7, "(#4b7812)");
+            AddDigPlanRow(part2, 'D', 2, "(#09cdc1)");
+            AddDigPlanRow(part2, 'R', 5, "(#3c3502)");
+            AddDigPlanRow(part2, 'D', 2, "(#70eb41)");
+            AddDigPlanRow(part2, 'R', 12, "(#4b7400)");
+            AddDigPlanRow(part2, 'D', 3, "(#5c8043)");
+            AddDigPlanRow(part2, 'L', 12, "(#6085c0)");
+            AddDigPlanRow(part2, 'D', 3, "(#5c8041)");
+            AddDigPlanRow(part2, 'L', 4, "(#5b0330)");
+            AddDigPlanRow(part2, 'D', 4, "(#74bce1)");
+            AddDigPlanRow(part2, 'L', 12, "(#6f6142)");
+            AddDigPlanRow(part2, 'D', 2, "(#0f2211)");
+            AddDigPlanRow(part2, 'L', 5, "(#40e5b0)");
+            AddDigPlanRow(part2, 'D', 5, "(#72afc1)");
+            AddDigPlanRow(part2, 'L', 7, "(#40e5b2)");
+            AddDigPlanRow(part2, 'D', 3, "(#160a51)");
+            AddDigPlanRow(part2, 'L', 3, "(#7a6c72)");
+            AddDigPlanRow(part2, 'D', 6, "(#3ade81)");
+            AddDigPlanRow(part2, 'L', 4, "(#6c12d2)");
+            AddDigPlanRow(part2, 'U', 10, "(#0d3851)");
+            AddDigPlanRow(part2, 'L', 5, "(#4e1680)");
+            AddDigPlanRow(part2, 'D', 10, "(#65ba61)");
+            AddDigPlanRow(part2, 'L', 5, "(#185f10)");
+            AddDigPlanRow(part2, 'D', 3, "(#65ba63)");
+            AddDigPlanRow(part2, 'L', 6, "(#3ca040)");
+            AddDigPlanRow(part2, 'D', 7, "(#6970e1)");
+            AddDigPlanRow(part2, 'L', 3, "(#49ad52)");
+            AddDigPlanRow(part2, 'D', 2, "(#0c8481)");
+            AddDigPlanRow(part2, 'L', 8, "(#3e7a82)");
+            AddDigPlanRow(part2, 'D', 3, "(#0c8483)");
+            AddDigPlanRow(part2, 'L', 5, "(#1aee02)");
+            AddDigPlanRow(part2, 'D', 4, "(#35e721)");
+            AddDigPlanRow(part2, 'L', 4, "(#39f672)");
+            AddDigPlanRow(part2, 'D', 5, "(#07f333)");
+            AddDigPlanRow(part2, 'L', 6, "(#730842)");
+            AddDigPlanRow(part2, 'D', 6, "(#0fe7b3)");
+            AddDigPlanRow(part2, 'L', 3, "(#6079e2)");
+            AddDigPlanRow(part2, 'D', 9, "(#74e4d3)");
+            AddDigPlanRow(part2, 'L', 7, "(#6079e0)");
+            AddDigPlanRow(part2, 'D', 4, "(#1c77b3)");
+            AddDigPlanRow(part2, 'L', 3, "(#3299b2)");
+            AddDigPlanRow(part2, 'U', 4, "(#6649e3)");
+            AddDigPlanRow(part2, 'L', 5, "(#496642)");
+            AddDigPlanRow(part2, 'U', 5, "(#618563)");
+            AddDigPlanRow(part2, 'L', 4, "(#36e332)");
+            AddDigPlanRow(part2, 'D', 4, "(#084843)");
+            AddDigPlanRow(part2, 'L', 6, "(#670e22)");
+            AddDigPlanRow(part2, 'D', 9, "(#164f23)");
+            AddDigPlanRow(part2, 'L', 5, "(#3c5360)");
+            AddDigPlanRow(part2, 'D', 5, "(#467003)");
+            AddDigPlanRow(part2, 'L', 3, "(#3c5362)");
+            AddDigPlanRow(part2, 'U', 3, "(#3980d3)");
+            AddDigPlanRow(part2, 'L', 3, "(#275e32)");
+            AddDigPlanRow(part2, 'U', 6, "(#19ea63)");
+            AddDigPlanRow(part2, 'L', 4, "(#855df0)");
+            AddDigPlanRow(part2, 'U', 2, "(#5ec993)");
+            AddDigPlanRow(part2, 'L', 9, "(#66f342)");
+            AddDigPlanRow(part2, 'U', 7, "(#4ac7a3)");
+            AddDigPlanRow(part2, 'L', 5, "(#1e6ab2)");
+            AddDigPlanRow(part2, 'U', 8, "(#2bd3a3)");
+            AddDigPlanRow(part2, 'L', 4, "(#5f6272)");
+            AddDigPlanRow(part2, 'U', 5, "(#3b2031)");
+            AddDigPlanRow(part2, 'L', 4, "(#1c1fa0)");
+            AddDigPlanRow(part2, 'U', 5, "(#534711)");
+            AddDigPlanRow(part2, 'R', 3, "(#1c1fa2)");
+            AddDigPlanRow(part2, 'U', 5, "(#3474d1)");
+            AddDigPlanRow(part2, 'R', 5, "(#572be2)");
+            AddDigPlanRow(part2, 'D', 4, "(#2cdf53)");
+            AddDigPlanRow(part2, 'R', 6, "(#3bb0e2)");
+            AddDigPlanRow(part2, 'U', 4, "(#5e9073)");
+            AddDigPlanRow(part2, 'R', 4, "(#3bb0e0)");
+            AddDigPlanRow(part2, 'U', 4, "(#376c53)");
+            AddDigPlanRow(part2, 'L', 3, "(#193f72)");
+            AddDigPlanRow(part2, 'U', 3, "(#484e83)");
+            AddDigPlanRow(part2, 'L', 4, "(#799b82)");
+            AddDigPlanRow(part2, 'U', 5, "(#52f273)");
+            AddDigPlanRow(part2, 'R', 4, "(#376190)");
+            AddDigPlanRow(part2, 'U', 5, "(#3650a3)");
+            AddDigPlanRow(part2, 'L', 5, "(#7def10)");
+            AddDigPlanRow(part2, 'D', 2, "(#20fa83)");
+            AddDigPlanRow(part2, 'L', 2, "(#089240)");
+            AddDigPlanRow(part2, 'D', 11, "(#49c3a3)");
+            AddDigPlanRow(part2, 'L', 3, "(#768be0)");
+            AddDigPlanRow(part2, 'U', 4, "(#42fa23)");
+            AddDigPlanRow(part2, 'L', 5, "(#5ab362)");
+            AddDigPlanRow(part2, 'U', 4, "(#593983)");
+            AddDigPlanRow(part2, 'L', 8, "(#5e6ba2)");
+            AddDigPlanRow(part2, 'D', 4, "(#593981)");
+            AddDigPlanRow(part2, 'R', 4, "(#7b4fc2)");
+            AddDigPlanRow(part2, 'D', 9, "(#44a9c3)");
+            AddDigPlanRow(part2, 'L', 2, "(#086692)");
+            AddDigPlanRow(part2, 'D', 3, "(#7ce9f3)");
+            AddDigPlanRow(part2, 'L', 4, "(#68b430)");
+            AddDigPlanRow(part2, 'U', 6, "(#5ab7c1)");
+            AddDigPlanRow(part2, 'L', 4, "(#430330)");
+            AddDigPlanRow(part2, 'D', 6, "(#0b1593)");
+            AddDigPlanRow(part2, 'L', 5, "(#1ca4a0)");
+            AddDigPlanRow(part2, 'D', 5, "(#0b1591)");
+            AddDigPlanRow(part2, 'R', 10, "(#429f80)");
+            AddDigPlanRow(part2, 'D', 2, "(#5ab7c3)");
+            AddDigPlanRow(part2, 'R', 2, "(#292be0)");
+            AddDigPlanRow(part2, 'D', 4, "(#7a8693)");
+            AddDigPlanRow(part2, 'R', 3, "(#12dfd2)");
+            AddDigPlanRow(part2, 'D', 10, "(#2244f3)");
+            AddDigPlanRow(part2, 'L', 4, "(#4eeb62)");
+            AddDigPlanRow(part2, 'D', 10, "(#4831c3)");
+            AddDigPlanRow(part2, 'L', 6, "(#25aa50)");
+            AddDigPlanRow(part2, 'U', 8, "(#379b33)");
+            AddDigPlanRow(part2, 'L', 3, "(#25aa52)");
+            AddDigPlanRow(part2, 'U', 3, "(#145863)");
+            AddDigPlanRow(part2, 'L', 5, "(#480492)");
+            AddDigPlanRow(part2, 'U', 4, "(#69feb1)");
+            AddDigPlanRow(part2, 'L', 7, "(#593592)");
+            AddDigPlanRow(part2, 'U', 4, "(#4c6b91)");
+            AddDigPlanRow(part2, 'L', 5, "(#312212)");
+            AddDigPlanRow(part2, 'U', 3, "(#26df43)");
+            AddDigPlanRow(part2, 'R', 12, "(#68b362)");
+            AddDigPlanRow(part2, 'U', 4, "(#6e94f3)");
+            AddDigPlanRow(part2, 'L', 5, "(#28bd52)");
+            AddDigPlanRow(part2, 'U', 4, "(#1aea03)");
+            AddDigPlanRow(part2, 'L', 8, "(#615f22)");
+            AddDigPlanRow(part2, 'U', 2, "(#6fb163)");
+            AddDigPlanRow(part2, 'L', 2, "(#40b8a2)");
+            AddDigPlanRow(part2, 'U', 7, "(#09d633)");
+            AddDigPlanRow(part2, 'L', 7, "(#044e02)");
+            AddDigPlanRow(part2, 'U', 8, "(#1a4333)");
+            AddDigPlanRow(part2, 'L', 4, "(#172d00)");
+            AddDigPlanRow(part2, 'U', 2, "(#4509c3)");
+            AddDigPlanRow(part2, 'L', 6, "(#4de1d0)");
+            AddDigPlanRow(part2, 'U', 7, "(#818a41)");
+            AddDigPlanRow(part2, 'L', 4, "(#0ce4b0)");
+            AddDigPlanRow(part2, 'U', 7, "(#0745d1)");
+            AddDigPlanRow(part2, 'R', 6, "(#520370)");
+            AddDigPlanRow(part2, 'U', 2, "(#5a7db3)");
+            AddDigPlanRow(part2, 'R', 8, "(#2f93c0)");
+            AddDigPlanRow(part2, 'U', 4, "(#2e5263)");
+            AddDigPlanRow(part2, 'L', 4, "(#147e00)");
+            AddDigPlanRow(part2, 'U', 3, "(#44d303)");
+            AddDigPlanRow(part2, 'L', 7, "(#245640)");
+            AddDigPlanRow(part2, 'U', 4, "(#17d933)");
+            AddDigPlanRow(part2, 'L', 3, "(#4f6820)");
+            AddDigPlanRow(part2, 'U', 3, "(#17d931)");
+            AddDigPlanRow(part2, 'L', 10, "(#488c50)");
+            AddDigPlanRow(part2, 'D', 3, "(#108b33)");
+            AddDigPlanRow(part2, 'L', 4, "(#300e60)");
+            AddDigPlanRow(part2, 'D', 3, "(#887d43)");
+            AddDigPlanRow(part2, 'R', 7, "(#4272d0)");
+            AddDigPlanRow(part2, 'D', 8, "(#657091)");
+            AddDigPlanRow(part2, 'L', 7, "(#63d120)");
+            AddDigPlanRow(part2, 'D', 3, "(#230cb1)");
+            AddDigPlanRow(part2, 'R', 4, "(#04e1b0)");
+            AddDigPlanRow(part2, 'D', 6, "(#4ba9a3)");
+            AddDigPlanRow(part2, 'L', 7, "(#055c40)");
+            AddDigPlanRow(part2, 'U', 2, "(#3ee173)");
+            AddDigPlanRow(part2, 'L', 4, "(#454062)");
+            AddDigPlanRow(part2, 'U', 6, "(#2af563)");
+            AddDigPlanRow(part2, 'L', 3, "(#40a642)");
+            AddDigPlanRow(part2, 'U', 6, "(#4ddf13)");
+            AddDigPlanRow(part2, 'L', 6, "(#85e6a0)");
+            AddDigPlanRow(part2, 'U', 6, "(#090df3)");
+            AddDigPlanRow(part2, 'L', 9, "(#055c42)");
+            AddDigPlanRow(part2, 'U', 2, "(#4ac2b3)");
+            AddDigPlanRow(part2, 'L', 3, "(#2ae1a0)");
+            AddDigPlanRow(part2, 'U', 5, "(#43af51)");
+            AddDigPlanRow(part2, 'R', 6, "(#860900)");
+            AddDigPlanRow(part2, 'U', 5, "(#43af53)");
+            AddDigPlanRow(part2, 'L', 6, "(#057bb0)");
+            AddDigPlanRow(part2, 'U', 3, "(#570c13)");
+            AddDigPlanRow(part2, 'R', 4, "(#515d92)");
+            AddDigPlanRow(part2, 'U', 3, "(#09a031)");
+            AddDigPlanRow(part2, 'L', 7, "(#45b7f2)");
+            AddDigPlanRow(part2, 'U', 5, "(#09a033)");
+            AddDigPlanRow(part2, 'R', 6, "(#1f50d2)");
+            AddDigPlanRow(part2, 'U', 7, "(#4e6373)");
+            AddDigPlanRow(part2, 'L', 6, "(#5df030)");
+            AddDigPlanRow(part2, 'U', 7, "(#004663)");
+            AddDigPlanRow(part2, 'R', 7, "(#10f120)");
+            AddDigPlanRow(part2, 'U', 4, "(#5f4883)");
+            AddDigPlanRow(part2, 'L', 12, "(#10f122)");
+            AddDigPlanRow(part2, 'U', 2, "(#441aa3)");
+            AddDigPlanRow(part2, 'L', 3, "(#1c7242)");
+            AddDigPlanRow(part2, 'U', 4, "(#4849a3)");
+            AddDigPlanRow(part2, 'R', 7, "(#7026d2)");
+            AddDigPlanRow(part2, 'U', 4, "(#442943)");
+            AddDigPlanRow(part2, 'R', 8, "(#5c5152)");
+            AddDigPlanRow(part2, 'U', 5, "(#563813)");
+            AddDigPlanRow(part2, 'L', 4, "(#5c5150)");
+            AddDigPlanRow(part2, 'U', 4, "(#1460b3)");
+            AddDigPlanRow(part2, 'L', 5, "(#1d3272)");
+            AddDigPlanRow(part2, 'U', 6, "(#1d15d3)");
+            AddDigPlanRow(part2, 'R', 5, "(#4fe282)");
+            AddDigPlanRow(part2, 'U', 3, "(#6a04c1)");
+            AddDigPlanRow(part2, 'L', 6, "(#2ca912)");
+            AddDigPlanRow(part2, 'U', 5, "(#1d2623)");
+            AddDigPlanRow(part2, 'L', 6, "(#298bb2)");
+            AddDigPlanRow(part2, 'U', 3, "(#1d2621)");
+            AddDigPlanRow(part2, 'L', 9, "(#3a4e82)");
+            AddDigPlanRow(part2, 'U', 4, "(#2abf71)");
+            AddDigPlanRow(part2, 'L', 5, "(#01c5d2)");
+            AddDigPlanRow(part2, 'U', 4, "(#7f5d41)");
+            AddDigPlanRow(part2, 'L', 6, "(#0149b2)");
+            AddDigPlanRow(part2, 'U', 4, "(#66f8c3)");
+            AddDigPlanRow(part2, 'L', 5, "(#53acd2)");
+            AddDigPlanRow(part2, 'U', 6, "(#55caa3)");
+            AddDigPlanRow(part2, 'L', 3, "(#676e82)");
+            AddDigPlanRow(part2, 'U', 8, "(#5c69a3)");
+            AddDigPlanRow(part2, 'R', 5, "(#5d7ed2)");
+            AddDigPlanRow(part2, 'U', 2, "(#1d90a3)");
+            AddDigPlanRow(part2, 'R', 3, "(#579cb2)");
+            AddDigPlanRow(part2, 'U', 3, "(#631003)");
+            AddDigPlanRow(part2, 'R', 9, "(#6ffcb2)");
+            AddDigPlanRow(part2, 'U', 5, "(#2e98f3)");
+            AddDigPlanRow(part2, 'R', 2, "(#036c22)");
+            AddDigPlanRow(part2, 'U', 3, "(#2bd763)");
+            AddDigPlanRow(part2, 'L', 5, "(#478442)");
+            AddDigPlanRow(part2, 'U', 7, "(#7a8373)");
+            AddDigPlanRow(part2, 'L', 9, "(#5da862)");
+            AddDigPlanRow(part2, 'U', 4, "(#13a8d3)");
+        }
+
+        internal class PlanStep
+        {
+            public PlanStep(char direction, int count)
+            {
+                Direction = direction;
+                Count = count;
+            }
+
+            public char Direction { get; set; }
+            public int Count { get; set; }
+        }
+    }
+}
