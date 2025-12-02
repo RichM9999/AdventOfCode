@@ -1,4 +1,6 @@
 ﻿//https://adventofcode.com/2025/day/1
+using System.Threading.Tasks.Dataflow;
+
 namespace AdventOfCode.Year2025
 {
     class Day1
@@ -24,93 +26,26 @@ namespace AdventOfCode.Year2025
             {
                 dial += rotation;
 
-                if (dial == 0 || dial == 100)
-                {
-                    zeroes++;
-
-                    if (dial == 100)
-                    {
-                        dial = 0;
-                    }
-                }
-                else
-                {
-                    while (dial > 99)
-                    {
-                        dial -= 100;
-                    }
-
-                    while (dial < 0)
-                    {
-                        dial += 100;
-                    }
-
-                    if (dial == 0)
-                    {
-                        zeroes++;
-                    }
-                }
+                zeroes += dial % 100 == 0 ? 1 : 0;
+                dial = dial % 100 > 0 ? dial % 100 : 100 + dial % 100;
             }
 
             return zeroes;
         }
 
-  l      private int Part2()
+        private int Part2()
         {
             int dial = 50;
             var zeroes = 0;
 
             foreach (var rotation in rotations)
             {
-                var dialStart = dial;
-                var firstPassByZero = false;
+                zeroes += (dial != 0 && dial + rotation <= 0 ? 1 : 0);
+
                 dial += rotation;
 
-                if (dial == 0 || dial == 100)
-                {
-                    zeroes++;
-
-                    if (dial == 100)
-                    {
-                        dial = 0;
-                    }
-
-                    continue;
-                }
-
-                while (dial < 0 || dial > 100)
-                {
-                    if (dial > 99)
-                    {
-                        dial -= 100;
-
-                        zeroes++;
-                    }
-
-                    if (dial < 0)
-                    {
-                        dial += 100;
-
-                        if (dialStart != 0 || firstPassByZero)
-                        {
-                            zeroes++;
-                        }
-                    }
-
-                    firstPassByZero = true;
-
-                    if (dial == 0 || dial == 100)
-                    {
-                        zeroes++;
-
-                        if (dial == 100)
-                        {
-                            dial = 0;
-                        }
-
-                        break;
-                    }
-                }
+                zeroes += Math.Abs(dial / 100);
+                dial = dial % 100 >= 0 ? dial % 100 : 100 + (dial % 100);
             }
 
             return zeroes;
