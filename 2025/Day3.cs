@@ -17,17 +17,17 @@ namespace AdventOfCode.Year2025
 
         private long Part1()
         {
-            // Find largest number with 2 digits
-            return GetSumOfLargestNumber(2);
+            // Find sum of all largest numbers with 2 digits
+            return GetSumOfLargestNumbersByNumberOfDigits(2);
         }
 
         private long Part2()
         {
-            // Find largest number with 12 digits
-            return GetSumOfLargestNumber(12);
+            // Find sum of all largest numbers with 12 digits
+            return GetSumOfLargestNumbersByNumberOfDigits(12);
         }
 
-        private long GetSumOfLargestNumber(int digits)
+        private long GetSumOfLargestNumbersByNumberOfDigits(int digits)
         {
             long sum = 0;
 
