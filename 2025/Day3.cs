@@ -31,7 +31,6 @@ namespace AdventOfCode.Year2025
         {
             long sum = 0;
 
-
             foreach (var bank in banks)
             {
                 // Create array of digits that all initialize to 0
