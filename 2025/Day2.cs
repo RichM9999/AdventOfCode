@@ -9,10 +9,14 @@ namespace AdventOfCode.Year2025
         {
             LoadData(ref ranges);
 
+            var start = DateTime.Now;
+
             // 54641809925
             Console.WriteLine($"Part 1 answer: {Part1()}");
             // 73694270688
             Console.WriteLine($"Part 2 answer: {Part2()}");
+
+            Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
         }
 
         private long Part1()
