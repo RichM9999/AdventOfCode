@@ -19,9 +19,9 @@ namespace AdventOfCode.Year2025
         {
             long sum = 0;
 
-            foreach (var range in ranges)
+            foreach (var (low, high) in ranges)
             {
-                for (var x = range.low; x <= range.high; x++)
+                for (var x = low; x <= high; x++)
                 {
                     var numberString = x.ToString();
                     var digits = numberString.Length;                   
@@ -43,9 +43,9 @@ namespace AdventOfCode.Year2025
         {
             long sum = 0;
 
-            foreach (var range in ranges)
+            foreach (var (low, high) in ranges)
             {
-                for (var x = range.low; x <= range.high; x++)
+                for (var x = low; x <= high; x++)
                 {
                     // Single digit, can't have repeating pattern
                     if (x < 10)
