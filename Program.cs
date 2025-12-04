@@ -18,6 +18,11 @@
             var day3 = new Year2025.Day3();
             day3.Run();
             Console.WriteLine();
+
+            Console.WriteLine("Day4:");
+            var day4 = new Year2025.Day4();
+            day4.Run();
+            Console.WriteLine();
         }
     }
 }
