@@ -53,8 +53,8 @@ namespace AdventOfCode.Year2025
 
                     // range encapsulates entirety of other range
                     // so disable other range
-                    //   ooooo
-                    //    rrr
+                    //   rrrrr
+                    //    ooo
                     if (other.low <= range.low && other.high >= range.high)
                     {
                         other.low = 0;
