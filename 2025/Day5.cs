@@ -3,7 +3,7 @@ namespace AdventOfCode.Year2025
 {
     class Day5
     {
-        List<(long index, long low, long high)> freshRanges = new();
+        List<(long low, long high)> freshRanges = new();
         List<long> available = new();
 
         public void Run()
@@ -35,10 +35,11 @@ namespace AdventOfCode.Year2025
 
                 for (var o = 0; o < freshRanges.Count; o++)
                 {
-                    var other = freshRanges[o];
-
-                    if (other.index == range.index || other.low == 0)
+                    // Skip if comparing to self or other range is already disabled
+                    if (r == o || freshRanges[o].low == 0)
                         continue;
+
+                    var other = freshRanges[o];
 
                     // other range encapsulates entirety of range
                     // so disable range
@@ -49,6 +50,8 @@ namespace AdventOfCode.Year2025
                         range.low = 0;
                         range.high = 0;
                         freshRanges[r] = range;
+                        // stop checking other ranges since this range is now disabled
+                        break;
                     }
 
                     // range encapsulates entirety of other range
@@ -60,6 +63,7 @@ namespace AdventOfCode.Year2025
                         other.low = 0;
                         other.high = 0;
                         freshRanges[o] = other;
+                        continue;
                     }
 
                     // other range overlaps range and extends past
@@ -73,6 +77,7 @@ namespace AdventOfCode.Year2025
                     {
                         range.high = other.low - 1;
                         freshRanges[r] = range;
+                        continue;
                     }
 
                     // other range overlaps range and extends past
@@ -86,6 +91,7 @@ namespace AdventOfCode.Year2025
                     {
                         range.low = other.high + 1;
                         freshRanges[r] = range;
+                        continue;
                     }
                 }
             }
@@ -1293,7 +1299,7 @@ namespace AdventOfCode.Year2025
 
         private void AddFreshRange(string range)
         {
-            freshRanges.Add((freshRanges.Count, long.Parse(range.Split('-')[0]), long.Parse(range.Split('-')[1])));
+            freshRanges.Add((long.Parse(range.Split('-')[0]), long.Parse(range.Split('-')[1])));
         }
     }
 }
