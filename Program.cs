@@ -23,6 +23,11 @@
             var day4 = new Year2025.Day4();
             day4.Run();
             Console.WriteLine();
+
+            Console.WriteLine("Day5:");
+            var day5 = new Year2025.Day5();
+            day5.Run();
+            Console.WriteLine();
         }
     }
 }
