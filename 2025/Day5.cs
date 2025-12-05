@@ -80,7 +80,7 @@ namespace AdventOfCode.Year2025
                         continue;
                     }
 
-                    // other range overlaps range and extends past
+                    // other range overlaps range and starts before
                     // trim range to start after other range
                     //   ooooo
                     //     rrrrr
