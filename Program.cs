@@ -33,6 +33,11 @@
             var day6 = new Year2025.Day6();
             day6.Run();
             Console.WriteLine();
+
+            Console.WriteLine("Day7:");
+            var day7 = new Year2025.Day7();
+            day7.Run();
+            Console.WriteLine();
         }
     }
 }
