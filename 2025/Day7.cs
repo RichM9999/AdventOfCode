@@ -36,7 +36,7 @@ namespace AdventOfCode.Year2025
                 // Analyze row left to right
                 for (var x = 0; x < mapSizeX; x++)
                 {
-                    // If start location, change to a single beam
+                    // If location above is start location, change to a single beam
                     if (map[(x, y - 1)].space == 'S')
                     {
                         map[(x, y - 1)] = ('|', 1);
