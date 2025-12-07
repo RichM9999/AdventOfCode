@@ -8,7 +8,6 @@ namespace AdventOfCode
 
         static void Main()
         {
-
             var dayClasses = AppDomain.CurrentDomain
                 .GetAssemblies()
                 .SelectMany(t => t.GetTypes())
