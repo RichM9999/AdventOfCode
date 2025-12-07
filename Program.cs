@@ -1,43 +1,28 @@
-﻿namespace AdventOfCode
+﻿using System.Globalization;
+
+namespace AdventOfCode
 {
     class Program
     {
+        private const int year = 2025;
+
         static void Main()
         {
-            Console.WriteLine("Day1:");
-            var day1 = new Year2025.Day1();
-            day1.Run();
-            Console.WriteLine();
 
-            Console.WriteLine("Day2:");
-            var day2 = new Year2025.Day2();
-            day2.Run();
-            Console.WriteLine();
+            var dayClasses = AppDomain.CurrentDomain
+                .GetAssemblies()
+                .SelectMany(t => t.GetTypes())
+                .Where(t => t.Namespace == $"AdventOfCode.Year{year}")
+                .Where(t => typeof(IDay).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+                .OrderBy(t => t.Name, StringComparer.Create(CultureInfo.CurrentCulture, CompareOptions.NumericOrdering));
 
-            Console.WriteLine("Day3:");
-            var day3 = new Year2025.Day3();
-            day3.Run();
-            Console.WriteLine();
-
-            Console.WriteLine("Day4:");
-            var day4 = new Year2025.Day4();
-            day4.Run();
-            Console.WriteLine();
-
-            Console.WriteLine("Day5:");
-            var day5 = new Year2025.Day5();
-            day5.Run();
-            Console.WriteLine();
-
-            Console.WriteLine("Day6:");
-            var day6 = new Year2025.Day6();
-            day6.Run();
-            Console.WriteLine();
-
-            Console.WriteLine("Day7:");
-            var day7 = new Year2025.Day7();
-            day7.Run();
-            Console.WriteLine();
+            foreach (var day in dayClasses)
+            {
+                Console.WriteLine($"{day.Name}:");
+                IDay? dayRunner = Activator.CreateInstance(day) as IDay;
+                dayRunner?.Run();
+                Console.WriteLine();
+            }
         }
     }
 }

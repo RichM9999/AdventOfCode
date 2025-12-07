@@ -1,7 +1,7 @@
 ﻿//https://adventofcode.com/2025/day/2
 namespace AdventOfCode.Year2025
 {
-    class Day2
+    class Day2 : IDay
     {
         List<(long low, long high)> ranges = [];
 

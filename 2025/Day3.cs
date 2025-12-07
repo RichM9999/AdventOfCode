@@ -1,7 +1,7 @@
 ﻿//https://adventofcode.com/2025/day/3
 namespace AdventOfCode.Year2025
 {
-    class Day3
+    class Day3 : IDay
     {
         List<int[]> banks = [];
 

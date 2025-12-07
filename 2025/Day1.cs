@@ -1,7 +1,7 @@
 ﻿//https://adventofcode.com/2025/day/1
 namespace AdventOfCode.Year2025
 {
-    class Day1
+    class Day1 : IDay
     {
         List<int> rotations = [];
 

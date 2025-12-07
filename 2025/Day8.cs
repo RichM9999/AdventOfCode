@@ -1,7 +1,7 @@
-﻿//https://adventofcode.com/2025/day/6
+﻿//https://adventofcode.com/2025/day/8
 namespace AdventOfCode.Year2025
 {
-    class Day6 : IDay
+    class Day8 : IDay
     {
         List<(long number1, long number2, long number3, long number4, bool isMultiplication)> problems = [];
 

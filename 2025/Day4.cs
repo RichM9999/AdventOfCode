@@ -3,7 +3,7 @@ namespace AdventOfCode.Year2025
 {
     using Coordinate = (int x, int y);
 
-    class Day4
+    class Day4 : IDay
     {
         const int mapSizeY = 139;
         const int mapSizeX = 139;
