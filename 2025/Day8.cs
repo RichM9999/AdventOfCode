@@ -7,7 +7,7 @@ namespace AdventOfCode.Year2025
     class Day8 : IDay
     {
         private List<Coordinate3D> boxes = [];
-        private List<List<Coordinate3D>> circuits = [];
+        private List<HashSet<Coordinate3D>> circuits = [];
 
         public void Run()
         {
@@ -63,31 +63,20 @@ namespace AdventOfCode.Year2025
                         // Get the other circuit found
                         var last = existing[1];
 
-                        // Add all boxes in other circuit to first that aren't already present in first (merge)
-                        first.AddRange(last.Except(first));
+                        // Union circuits to get distinct boxes in both
+                        first.UnionWith(last);
 
-                        // Both positions are now in first since they had to have been in separate circuits before
+                        // Both boxes are now in first since they had to have been in separate circuits before
                         // in order to find more than one existing circuit containing either of them
                         // Remove other circuit now merged into first
                         circuits.Remove(last);
                     }
                     else
                     {
-                        // Add first box in pair to existing circuit if it doesn't exist
-                        if (!first.Contains(pos1))
-                        {
-                            first.Add(pos1);
-                            // Don't need to check second if first not found since second had to have already been
-                            // in existing in order to find existing if first position wasn't already present
-                        }
-                        else
-                        {
-                            // Add second box in pair to existing circuit if it doesn't exist
-                            if (!first.Contains(pos2))
-                            {
-                                first.Add(pos2);
-                            }
-                        }
+                        // Add first box in pair to existing circuit - HashSet won't add duplicates
+                        first.Add(pos1);
+                        // Add second box in pair to existing circuit - HashSet won't add duplicates
+                        first.Add(pos2);
                     }
                 }
                 else
