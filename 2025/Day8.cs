@@ -1,9 +1,6 @@
 ﻿//https://adventofcode.com/2025/day/8
-using System.Runtime.InteropServices;
-
 namespace AdventOfCode.Year2025
 {
-    using MathNet.Numerics;
     using System.Linq;
     using Coordinate3D = (long x, long y, long z);
 
@@ -132,12 +129,13 @@ namespace AdventOfCode.Year2025
             return (productOfLimited, productOfFinal);
         }
 
-        private long Distance(Coordinate3D pos1, Coordinate3D pos2)
-        {
+        private long Distance(Coordinate3D pos1, Coordinate3D pos2) =>
             // Distance in 3d space is sqrt( (x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2 )
             // Skip sqrt for speed since it doesn't change relative distance ordering and allows everything to stay in long and not double
-            return (long)((long)Math.Pow(pos2.x - pos1.x, 2) + Math.Pow(pos2.y - pos1.y, 2) + Math.Pow(pos2.z - pos1.z, 2));
-        }
+            // And do manual squaring instead of Math.Pow() to avoid double altogether
+            (pos2.x - pos1.x) * (pos2.x - pos1.x) + 
+            (pos2.y - pos1.y) * (pos2.y - pos1.y) + 
+            (pos2.z - pos1.z) * (pos2.z - pos1.z);
 
         private void LoadData()
         {
