@@ -34,20 +34,23 @@ namespace AdventOfCode.Year2025
             long productOfLimited = 1;
             long productOfFinal = 1;
 
-            // Create all combinations of pairs of boxes
-            var boxPairs = new List<(Coordinate3D pos1, Coordinate3D pos2, long distance)>();
+            // Create all combinations of pairs of boxes in queue ordered by distance
+            var boxPairs = new PriorityQueue<(Coordinate3D pos1, Coordinate3D pos2), long>();
 
             for (var a = 0; a < boxes.Count - 1; a++)
             {
                 for (var b = a + 1; b < boxes.Count; b++)
                 {
-                    boxPairs.Add((boxes[a], boxes[b], Distance(boxes[a], boxes[b])));
+                    boxPairs.Enqueue((boxes[a], boxes[b]), Distance(boxes[a], boxes[b]));
                 }
             }
 
-            // Enumerate box pairs by distance
-            foreach (var (pos1, pos2, distance) in boxPairs.OrderBy(p => p.distance))
+            // Enumerate over box pairs
+            while (boxPairs.Count > 0)
             {
+                // Get next pair from queue which will be ordered by Distance
+                (Coordinate3D pos1, Coordinate3D pos2) = boxPairs.Dequeue();
+
                 // Find existing circuits containing either box in the pair
                 var existing = circuits.Where(c => c.Contains(pos1) || c.Contains(pos2)).ToArray();
 
