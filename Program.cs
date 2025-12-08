@@ -16,7 +16,8 @@ namespace AdventOfCode
                 .Where(t => t.Namespace == $"AdventOfCode.Year{year}")
                 .Where(t => typeof(IDay).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
                 .OrderBy(t => t.Name, StringComparer.Create(CultureInfo.CurrentCulture, CompareOptions.NumericOrdering))
-                .Skip(singleDay-1);
+                .Skip(singleDay-1)
+                .Take(singleDay > 0 ? 1 : 99);
 
             foreach (var day in dayClasses)
             {
