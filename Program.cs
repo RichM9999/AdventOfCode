@@ -8,12 +8,15 @@ namespace AdventOfCode
 
         static void Main()
         {
+            var singleDay = 8;
+
             var dayClasses = AppDomain.CurrentDomain
                 .GetAssemblies()
                 .SelectMany(t => t.GetTypes())
                 .Where(t => t.Namespace == $"AdventOfCode.Year{year}")
                 .Where(t => typeof(IDay).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
-                .OrderBy(t => t.Name, StringComparer.Create(CultureInfo.CurrentCulture, CompareOptions.NumericOrdering));
+                .OrderBy(t => t.Name, StringComparer.Create(CultureInfo.CurrentCulture, CompareOptions.NumericOrdering))
+                .Skip(singleDay-1);
 
             foreach (var day in dayClasses)
             {

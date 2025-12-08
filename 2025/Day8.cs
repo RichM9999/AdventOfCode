@@ -18,29 +18,21 @@ namespace AdventOfCode.Year2025
 
             var start = DateTime.Now;
 
+            (long part1, long part2) = CombineCircuits(1000);
+
             // 26400
-            Console.WriteLine($"Part 1 answer: {Part1()}");
+            Console.WriteLine($"Part 1 answer: {part1}");
             // 8199963486
-            Console.WriteLine($"Part 2 answer: {Part2()}");
+            Console.WriteLine($"Part 2 answer: {part2}");
 
             Console.WriteLine($"{(DateTime.Now - start).TotalMilliseconds}ms");
         }
 
-        private long Part1()
-        {
-            // Limit combining to first 1000 pairs
-            return CombineCircuits(1000);
-        }
-
-        private long Part2()
-        {
-            // Combine until a single global circuit achieved
-            return CombineCircuits(-1);
-        }
-
-        private long CombineCircuits(int limit)
+        private (long part1, long part2) CombineCircuits(int limit)
         {
             circuits = [];
+            long productOfLimited = 1;
+            long productOfFinal = 1;
 
             // Create all combinations of pairs of boxes
             var boxPairs = new List<(Coordinate3D pos1, Coordinate3D pos2, double distance)>();
@@ -53,50 +45,49 @@ namespace AdventOfCode.Year2025
                 }
             }
 
-            // Get box pairs ordered by distance
-            var orderedBoxPairs = boxPairs.OrderBy(p => p.distance).ToList();
-
             // Enumerate box pairs by distance
-            foreach (var (pos1, pos2, distance) in orderedBoxPairs)
+            foreach (var (pos1, pos2, distance) in boxPairs.OrderBy(p => p.distance))
             {
                 // Find existing circuits containing either box in the pair
-                var existing = circuits.Where(c => c.Contains(pos1) || c.Contains(pos2)).ToList();
+                var existing = circuits.Where(c => c.Contains(pos1) || c.Contains(pos2)).ToArray();
 
                 // If existing circuit(s) found...
-                if (existing.Count != 0)
+                if (existing.Length != 0)
                 {
                     // Get first circuit found
-                    var first = existing.First();
+                    var first = existing[0];
 
                     // If another circuit found..
-                    if (existing.Count > 1)
+                    if (existing.Length > 1)
                     {
                         // Get the other circuit found
-                        var last = existing.Last();
+                        var last = existing[1];
 
-                        // Add any boxes in other circuit to first that aren't already present
-                        foreach (var pos in last)
-                        {
-                            if (!first.Contains(pos))
-                            {
-                                first.Add(pos);
-                            }
-                        }
+                        // Add all boxes in other circuit to first that aren't already present in first (merge)
+                        first.AddRange(last.Except(first));
 
+                        // Both positions are now in first since they had to have been in separate circuits before
+                        // in order to find more than one existing circuit containing either of them
                         // Remove other circuit now merged into first
                         circuits.Remove(last);
                     }
-
-                    // Add first box in pair to existing (now possibly-merged) circuit if it doesn't exist
-                    if (!first.Contains(pos1))
+                    else
                     {
-                        first.Add(pos1);
-                    }
-
-                    // Add second box in pair to existing (now possibly-merged) circuit if it doesn't exist
-                    if (!first.Contains(pos2))
-                    {
-                        first.Add(pos2);
+                        // Add first box in pair to existing circuit if it doesn't exist
+                        if (!first.Contains(pos1))
+                        {
+                            first.Add(pos1);
+                            // Don't need to check second if first not found since second had to have already been
+                            // in existing in order to find existing if first position wasn't already present
+                        }
+                        else
+                        {
+                            // Add second box in pair to existing circuit if it doesn't exist
+                            if (!first.Contains(pos2))
+                            {
+                                first.Add(pos2);
+                            }
+                        }
                     }
                 }
                 else
@@ -118,30 +109,24 @@ namespace AdventOfCode.Year2025
                         var sizes = circuits.Select(c => c.Count).OrderByDescending(c => c).Distinct().Take(3).ToList();
 
                         // Multiply their sizes together
-                        long product = 1;
-
                         foreach (var size in sizes)
                         {
-                            product *= size;
+                            productOfLimited *= size;
                         }
-
-                        // Return product of top 3 largest distinct circuit sizes
-                        return product;
                     }
                 }
-                else
+
+                // If not limited to a number of pairs, check if we've made it to a single circuit containing all the boxes
+                if (circuits.Count == 1 && circuits.First().Count == boxes.Count)
                 {
-                    // If not limited to a number of pairs, check if we've made it to a single circuit containing all the boxes
-                    if (circuits.Count == 1 && circuits.First().Count == boxes.Count)
-                    {
-                        // If so, return the product of the x coordinates of the last pair that achieved a global circuit
-                        return pos1.x * pos2.x;
-                    }
+                    // If so, return the product of the x coordinates of the last pair that achieved a global circuit
+                    productOfFinal = pos1.x * pos2.x;
+                    break;
                 }
             }
 
-            // Should never get here
-            return 0;
+            // Return answers
+            return (productOfLimited, productOfFinal);
         }
 
         private double Distance(Coordinate3D pos1, Coordinate3D pos2)
