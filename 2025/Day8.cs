@@ -35,7 +35,7 @@ namespace AdventOfCode.Year2025
             long productOfFinal = 1;
 
             // Create all combinations of pairs of boxes
-            var boxPairs = new List<(Coordinate3D pos1, Coordinate3D pos2, double distance)>();
+            var boxPairs = new List<(Coordinate3D pos1, Coordinate3D pos2, long distance)>();
 
             for (var a = 0; a < boxes.Count - 1; a++)
             {
@@ -129,10 +129,11 @@ namespace AdventOfCode.Year2025
             return (productOfLimited, productOfFinal);
         }
 
-        private double Distance(Coordinate3D pos1, Coordinate3D pos2)
+        private long Distance(Coordinate3D pos1, Coordinate3D pos2)
         {
             // Distance in 3d space is sqrt( (x2-x1)^2 + (y2-y1)^2 + (z2-z1)^2 )
-            return Math.Sqrt(Math.Pow(pos2.x - pos1.x, 2) + Math.Pow(pos2.y - pos1.y, 2) + Math.Pow(pos2.z - pos1.z, 2));
+            // Skip sqrt for speed since it doesn't change relative distance ordering and allows everything to stay in long and not double
+            return (long)((long)Math.Pow(pos2.x - pos1.x, 2) + Math.Pow(pos2.y - pos1.y, 2) + Math.Pow(pos2.z - pos1.z, 2));
         }
 
         private void LoadData()
