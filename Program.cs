@@ -8,7 +8,7 @@ namespace AdventOfCode
 
         static void Main()
         {
-            var singleDay = 0;
+            var singleDay = 11;
 
             var dayClasses = AppDomain.CurrentDomain
                 .GetAssemblies()
