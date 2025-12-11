@@ -8,13 +8,15 @@ namespace AdventOfCode
 
         static void Main()
         {
-            var singleDay = 9;
+            var singleDay = 0;
 
             var dayClasses = AppDomain.CurrentDomain
                 .GetAssemblies()
                 .SelectMany(t => t.GetTypes())
                 .Where(t => t.Namespace == $"AdventOfCode.Year{year}")
                 .Where(t => typeof(IDay).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+                // Ignore SlowDay Days if running all
+                .Where(t => singleDay != 0 || !t.CustomAttributes.Any(a => a.AttributeType.Name != "SlowDay"))
                 .OrderBy(t => t.Name, StringComparer.Create(CultureInfo.CurrentCulture, CompareOptions.NumericOrdering))
                 .Skip(singleDay-1)
                 .Take(singleDay > 0 ? 1 : 99);

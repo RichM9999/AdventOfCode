@@ -1,6 +1,4 @@
 ﻿//https://adventofcode.com/2025/day/9
-using System.Runtime.InteropServices;
-
 namespace AdventOfCode.Year2025
 {
     using Coordinate = (int x, int y);
