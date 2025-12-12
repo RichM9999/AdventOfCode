@@ -8,7 +8,8 @@ namespace AdventOfCode
 
         static void Main()
         {
-            var singleDay = 11;
+            var singleDay = 0;
+            var ignoreSlowDays = false;
 
             var dayClasses = AppDomain.CurrentDomain
                 .GetAssemblies()
@@ -19,12 +20,14 @@ namespace AdventOfCode
                 .Skip(singleDay-1)
                 .Take(singleDay > 0 ? 1 : 99);
 
+            var start = DateTime.Now;
+
             foreach (var day in dayClasses)
             {
                 Console.WriteLine($"{day.Name}:");
 
                 // Ignore SlowDay Days if running all
-                if (singleDay == 0 && day.CustomAttributes.Any(a => a.AttributeType.Name == "SlowDay"))
+                if (singleDay == 0 && ignoreSlowDays && day.CustomAttributes.Any(a => a.AttributeType.Name == "SlowDay"))
                 {
                     Console.WriteLine("Skipping slow day...");
                 }
@@ -35,6 +38,8 @@ namespace AdventOfCode
                 }
                 Console.WriteLine();
             }
+
+            Console.WriteLine($"Total time: {(DateTime.Now - start).TotalMilliseconds}ms");
         }
     }
 }
